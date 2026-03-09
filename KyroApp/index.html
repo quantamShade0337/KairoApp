@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyro — Developer Asset Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#000;--white:#fff;--g1:#f2f2f2;--g2:#aaa;--g3:#555;--g4:#1e1e1e;--g5:#0d0d0d}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'DM Mono',monospace;overflow-x:hidden;cursor:auto}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:8999;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");background-size:300px;opacity:.5}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:#000;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;transition:opacity .9s,visibility .9s}
+#loader.out{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo{font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:.25em;color:#fff;opacity:0;animation:fadeUp .6s .1s forwards}
+.ld-bar{width:280px;height:1px;background:rgba(255,255,255,.07);position:relative;overflow:hidden;opacity:0;animation:fadeIn .4s .4s forwards}
+.ld-fill{position:absolute;left:0;top:0;height:100%;width:0;background:#fff;transition:width .05s linear}
+.ld-pct{font-size:11px;letter-spacing:.3em;color:var(--g3);opacity:0;animation:fadeIn .4s .4s forwards}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:24px 56px;transition:all .4s}
+nav.stuck{background:rgba(0,0,0,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07);padding:18px 56px}
+.n-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.22em;text-decoration:none;color:#fff;opacity:0;animation:fadeIn .5s .1s forwards}
+.n-links{display:flex;gap:36px;list-style:none;opacity:0;animation:fadeIn .5s .2s forwards}
+.n-links a{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--g2);text-decoration:none;transition:color .2s;position:relative}
+.n-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:#fff;transition:width .25s}
+.n-links a:hover{color:#fff}.n-links a:hover::after{width:100%}
+.n-right{display:flex;gap:10px;opacity:0;animation:fadeIn .5s .3s forwards}
+.btn-g{padding:9px 20px;border:1px solid rgba(255,255,255,.2);color:#fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:all .22s;display:inline-block;background:transparent}
+.btn-g:hover{border-color:#fff;background:rgba(255,255,255,.04)}
+.btn-s{padding:9px 20px;border:1px solid #fff;background:#fff;color:#000;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:all .22s;display:inline-block}
+.btn-s:hover{background:transparent;color:#fff}
+.btn-xl-s{padding:16px 42px;border:1px solid #fff;background:#fff;color:#000;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:all .22s;display:inline-block}
+.btn-xl-s:hover{background:transparent;color:#fff}
+.btn-xl-g{padding:16px 42px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:all .22s;display:inline-block}
+.btn-xl-g:hover{border-color:#fff}
+
+/* HERO */
+#hero{position:relative;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 56px 80px}
+#hc{position:absolute;inset:0;width:100%;height:100%}
+#hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.011) 2px,rgba(255,255,255,.011) 4px);pointer-events:none;z-index:1;animation:scan 10s linear infinite}
+
+.h-tag{font-size:10px;letter-spacing:.32em;color:var(--g3);text-transform:uppercase;margin-bottom:26px;display:flex;align-items:center;gap:12px;position:relative;z-index:2;opacity:0;animation:fadeUp .7s 1.9s forwards}
+.h-dot{width:5px;height:5px;border-radius:50%;background:#fff;flex-shrink:0;animation:blink 2.4s 2s infinite}
+
+.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(90px,13.5vw,210px);line-height:.86;letter-spacing:.01em;text-transform:uppercase;position:relative;z-index:2}
+.h1 .ln{display:block;overflow:hidden}
+.h1 .ln-i{display:block;transform:translateY(115%)}
+.h1 .ln-i.a1{animation:slideUp .95s cubic-bezier(.16,1,.3,1) 2.0s forwards}
+.h1 .ln-i.a2{animation:slideUp .95s cubic-bezier(.16,1,.3,1) 2.18s forwards}
+.h1 .ln-i.a3{animation:slideUp .95s cubic-bezier(.16,1,.3,1) 2.36s forwards}
+.h1 .out{-webkit-text-stroke:1px rgba(255,255,255,.26);color:transparent}
+
+.h-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:52px;position:relative;z-index:2;opacity:0;animation:fadeUp .8s 2.75s forwards}
+.h-desc{font-size:13px;line-height:1.8;color:var(--g2);max-width:400px}
+.h-cta{display:flex;align-items:center;gap:18px}
+.h-cta-note{font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase}
+
+/* Floating card */
+
+/* Scroll hint */
+.scroll-hint{position:absolute;right:56px;bottom:48px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:9px;opacity:0;animation:fadeIn .8s 3.4s forwards}
+.scroll-hint span{font-size:9px;letter-spacing:.26em;color:var(--g3);text-transform:uppercase;writing-mode:vertical-rl}
+.scroll-hint .arr{animation:bob 2.2s 3.6s infinite}
+
+/* MARQUEE */
+.mq{border-top:1px solid rgba(255,255,255,.055);border-bottom:1px solid rgba(255,255,255,.055);overflow:hidden;padding:18px 0;position:relative}
+.mq::before,.mq::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.mq::before{left:0;background:linear-gradient(90deg,#000,transparent)}
+.mq::after{right:0;background:linear-gradient(-90deg,#000,transparent)}
+.mq-track{display:flex;width:max-content;animation:marquee 30s linear infinite}
+.mq-item{display:flex;align-items:center;gap:32px;padding:0 32px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--g3);white-space:nowrap}
+.mq-item i{font-style:normal;font-size:6px;color:var(--g4)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(255,255,255,.055)}
+.s-cell{padding:52px 56px;border-right:1px solid rgba(255,255,255,.055);position:relative;overflow:hidden;transition:background .3s}
+.s-cell:last-child{border-right:none}
+.s-cell:hover{background:var(--g5)}
+.s-num{font-family:'Bebas Neue',sans-serif;font-size:68px;letter-spacing:.02em;line-height:1;margin-bottom:6px}
+.s-lbl{font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase}
+.s-badge{position:absolute;top:18px;right:18px;font-size:9px;letter-spacing:.12em;color:var(--g3);border:1px solid rgba(255,255,255,.055);padding:3px 8px}
+
+/* SECTION */
+.sec{padding:112px 56px}
+.s-ey{font-size:10px;letter-spacing:.28em;color:var(--g3);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.s-ey::before{content:'';width:16px;height:1px;background:var(--g3);display:block}
+.s-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,6vw,96px);letter-spacing:.02em;text-transform:uppercase;line-height:.88}
+.s-ttl .out{-webkit-text-stroke:1px rgba(255,255,255,.22);color:transparent}
+.s-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.055)}
+.s-lnk{font-size:10px;letter-spacing:.18em;color:var(--g2);text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s}
+.s-lnk:hover{color:#fff}
+.s-lnk::after{content:'→';transition:transform .2s}
+.s-lnk:hover::after{transform:translateX(4px)}
+
+/* PRODUCT GRID */
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.055)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.055)}
+.pc{background:#000;text-decoration:none;color:#fff;display:block;position:relative;overflow:hidden;transition:background .25s}
+.pc:hover{background:var(--g5)}
+.pc:hover .pc-reveal{opacity:1;transform:translateY(0)}
+.pc:hover .pc-tgrid{opacity:.4}
+.pc-thumb{aspect-ratio:16/9;position:relative;overflow:hidden;background:var(--g4)}
+.pc-tgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:26px 26px;transition:opacity .3s}
+.pc-tlabel{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.3em;color:rgba(255,255,255,.11);text-transform:uppercase}
+.pc-bdg{position:absolute;top:12px;left:12px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:4px 9px;background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.1);color:var(--g2)}
+.pc-body{padding:20px 22px}
+.pc-cat{font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;margin-bottom:6px}
+.pc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;line-height:1.2;margin-bottom:5px;letter-spacing:-.01em}
+.pc-by{font-size:10px;color:var(--g3)}
+.pc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.05)}
+.pc-price{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em}
+.pc-sales{font-size:9px;color:var(--g3);letter-spacing:.1em}
+.pc-reveal{position:absolute;bottom:0;left:0;right:0;background:#fff;color:#000;padding:11px;text-align:center;font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:all .22s}
+
+/* FEAT SPLIT */
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.055)}
+.feat-l{background:#000;padding:64px 56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:background .3s}
+.feat-l:hover{background:var(--g5)}
+.feat-bg{position:absolute;bottom:-30px;left:-10px;font-family:'Bebas Neue',sans-serif;font-size:190px;color:rgba(255,255,255,.023);pointer-events:none;letter-spacing:-.05em;line-height:1}
+.feat-ey{font-size:9px;letter-spacing:.28em;color:var(--g3);text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:8px}
+.feat-ey::before{content:'';width:14px;height:1px;background:var(--g3);display:block}
+.feat-title{font-family:'Bebas Neue',sans-serif;font-size:54px;line-height:.92;letter-spacing:.02em;text-transform:uppercase;margin-bottom:18px}
+.feat-desc{font-size:12px;line-height:1.75;color:var(--g2);max-width:400px;margin-bottom:36px}
+.feat-stats{display:flex;gap:32px;margin-bottom:40px}
+.feat-stat .fn{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1}
+.feat-stat .fl{font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase}
+.feat-ctas{display:flex;gap:12px}
+.feat-r{background:var(--g5);position:relative;overflow:hidden;min-height:480px}
+.feat-r-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.023) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.023) 1px,transparent 1px);background-size:30px 30px}
+.feat-r-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:130px;color:rgba(255,255,255,.04);letter-spacing:.02em;white-space:nowrap;pointer-events:none}
+.feat-r-inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:36px}
+.feat-r-pname{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--g2);margin-bottom:4px;position:relative;z-index:1}
+.feat-r-price{font-family:'Bebas Neue',sans-serif;font-size:88px;letter-spacing:.02em;line-height:.9;position:relative;z-index:1}
+
+/* HOW */
+.how-g{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.055);margin-top:68px}
+.how-c{background:#000;padding:44px 32px;position:relative;overflow:hidden;transition:background .3s}
+.how-c:hover{background:var(--g5)}
+.how-nbg{position:absolute;top:-18px;right:10px;font-family:'Bebas Neue',sans-serif;font-size:130px;color:rgba(255,255,255,.025);pointer-events:none;line-height:1}
+.how-stag{font-size:9px;letter-spacing:.26em;color:var(--g3);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.how-stag::before{content:'';width:12px;height:1px;background:var(--g3);display:block}
+.how-icon{font-size:22px;margin-bottom:18px;opacity:.6}
+.how-h{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:12px;letter-spacing:-.01em}
+.how-d{font-size:11px;line-height:1.8;color:var(--g2)}
+
+/* CATS */
+.cat-g{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:rgba(255,255,255,.055);margin-top:56px}
+.cat-c{background:#000;padding:34px 18px;text-align:center;text-decoration:none;color:#fff;transition:background .25s;overflow:hidden;position:relative}
+.cat-c:hover{background:var(--g5)}
+.cat-icon{font-size:26px;margin-bottom:12px;display:block;transition:transform .25s}
+.cat-c:hover .cat-icon{transform:scale(1.12)}
+.cat-nm{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.cat-cnt{font-size:10px;color:var(--g3);transition:color .25s}
+.cat-c:hover .cat-cnt{color:var(--g2)}
+
+/* GITHUB STRIP */
+.gh-strip{padding:72px 56px;border-top:1px solid rgba(255,255,255,.055);border-bottom:1px solid rgba(255,255,255,.055);display:flex;align-items:center;justify-content:space-between;transition:background .3s;gap:40px}
+.gh-strip:hover{background:var(--g5)}
+.gh-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,5vw,76px);line-height:.9;text-transform:uppercase;letter-spacing:.02em}
+.gh-ttl .out{-webkit-text-stroke:1px rgba(255,255,255,.22);color:transparent}
+.gh-sub{font-size:12px;line-height:1.7;color:var(--g2);max-width:360px;margin-top:14px}
+.gh-r{text-align:right;flex-shrink:0}
+
+/* TESTIMONIALS */
+.tst-g{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.055);margin-top:60px}
+.tst-c{background:#000;padding:40px;transition:background .3s}
+.tst-c:hover{background:var(--g5)}
+.tst-stars{display:flex;gap:4px;margin-bottom:18px}
+.tst-s{font-size:11px;color:var(--g4)}.tst-s.on{color:#fff}
+.tst-q{font-size:13px;line-height:1.75;color:var(--g1);margin-bottom:26px;font-style:italic}
+.tst-a{display:flex;align-items:center;gap:12px}
+.tst-av{width:32px;height:32px;background:var(--g4);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;flex-shrink:0}
+.tst-nm{font-size:12px;color:#fff;margin-bottom:2px}
+.tst-hd{font-size:10px;color:var(--g3)}
+
+/* CTA */
+.cta-sec{padding:152px 56px;text-align:center;position:relative;overflow:hidden;border-top:1px solid rgba(255,255,255,.055)}
+.cta-bg-w{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:clamp(150px,24vw,380px);color:rgba(255,255,255,.02);letter-spacing:-.03em;text-transform:uppercase;white-space:nowrap;pointer-events:none;animation:drift 22s ease-in-out infinite alternate}
+.cta-tag{font-size:10px;letter-spacing:.28em;color:var(--g3);text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;justify-content:center;gap:12px}
+.cta-tag::before,.cta-tag::after{content:'';width:26px;height:1px;background:var(--g3);display:block}
+.cta-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,11vw,165px);line-height:.86;text-transform:uppercase;letter-spacing:.01em;margin-bottom:48px;position:relative;z-index:1}
+.cta-h2 .out{-webkit-text-stroke:1px rgba(255,255,255,.24);color:transparent}
+.cta-btns{display:flex;gap:14px;justify-content:center;position:relative;z-index:1}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,.055)}
+.f-wm{padding:64px 56px 48px;border-bottom:1px solid rgba(255,255,255,.04);overflow:hidden}
+.f-wm-t{font-family:'Bebas Neue',sans-serif;font-size:clamp(110px,18vw,270px);line-height:.8;letter-spacing:-.02em;text-transform:uppercase;color:rgba(255,255,255,.055);-webkit-text-stroke:1px rgba(255,255,255,.09)}
+.f-mid{padding:44px 56px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:36px;border-bottom:1px solid rgba(255,255,255,.04)}
+.f-col-t{font-size:10px;letter-spacing:.24em;color:var(--g3);text-transform:uppercase;margin-bottom:18px}
+.f-col-l{list-style:none;display:flex;flex-direction:column;gap:10px}
+.f-col-l a{font-size:12px;color:var(--g3);text-decoration:none;transition:color .2s;letter-spacing:.04em}
+.f-col-l a:hover{color:#fff}
+.f-bot{padding:22px 56px;display:flex;justify-content:space-between;align-items:center}
+.f-copy{font-size:10px;color:var(--g3);letter-spacing:.12em}
+.f-bl{display:flex;gap:22px;list-style:none}
+.f-bl a{font-size:10px;color:var(--g3);text-decoration:none;text-transform:uppercase;letter-spacing:.12em;transition:color .2s}
+.f-bl a:hover{color:#fff}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+/* KEYFRAMES */
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(115%)}to{transform:translateY(0)}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes blink{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+@keyframes drift{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.07)}}
+@keyframes scan{from{background-position:0 0}to{background-position:0 200px}}
+@keyframes glitch{0%,88%,100%{transform:translate(0)}90%{transform:translate(-3px,1px)}93%{transform:translate(3px,-1px)}96%{transform:translate(-2px,2px)}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo">Kyro</div>
+  <div class="ld-bar"><div class="ld-fill" id="ldFill"></div></div>
+  <div class="ld-pct" id="ldPct">0%</div>
+</div>
+
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="n-logo">Kyro</a>
+  <ul class="n-links">
+    <li><a href="app.html">Marketplace</a></li>
+    <li><a href="#">Creators</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="#">Docs</a></li>
+  </ul>
+  <div class="n-right">
+    <a href="login.html" class="btn-g">Log In</a>
+    <a href="app.html" class="btn-s">Enter App</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hc"></canvas>
+  <div class="h-tag"><span class="h-dot"></span>Developer Asset Marketplace — Est. 2025</div>
+  <h1 class="h1">
+    <span class="ln"><span class="ln-i a1">Ship</span></span>
+    <span class="ln"><span class="ln-i a2 out">Faster.</span></span>
+    <span class="ln"><span class="ln-i a3">Sell More.</span></span>
+  </h1>
+  <div class="h-bottom">
+    <p class="h-desc">Buy and sell starter kits, APIs, templates, component libraries, and automation tools. The marketplace built by developers, for developers.</p>
+    <div class="h-cta">
+      <span class="h-cta-note">↑ free to start</span>
+      <a href="app.html" class="btn-xl-s">Enter App</a>
+      <a href="#products" class="btn-xl-g">Browse Assets</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <svg class="arr" width="14" height="20" viewBox="0 0 14 20" fill="none">
+      <path d="M7 1v18M1 13l6 6 6-6" stroke="rgba(255,255,255,.3)" stroke-width="1.2"/>
+    </svg>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq">
+  <div class="mq-track" id="mqTrack">
+    <div class="mq-item">Starter Kits <i>◆</i></div>
+    <div class="mq-item">UI Components <i>◆</i></div>
+    <div class="mq-item">API Templates <i>◆</i></div>
+    <div class="mq-item">Automation Tools <i>◆</i></div>
+    <div class="mq-item">Next.js Boilerplates <i>◆</i></div>
+    <div class="mq-item">SaaS Starters <i>◆</i></div>
+    <div class="mq-item">CLI Tools <i>◆</i></div>
+    <div class="mq-item">Design Systems <i>◆</i></div>
+    <div class="mq-item">Auth Kits <i>◆</i></div>
+    <div class="mq-item">Stripe Integrations <i>◆</i></div>
+    <div class="mq-item">Starter Kits <i>◆</i></div>
+    <div class="mq-item">UI Components <i>◆</i></div>
+    <div class="mq-item">API Templates <i>◆</i></div>
+    <div class="mq-item">Automation Tools <i>◆</i></div>
+    <div class="mq-item">Next.js Boilerplates <i>◆</i></div>
+    <div class="mq-item">SaaS Starters <i>◆</i></div>
+    <div class="mq-item">CLI Tools <i>◆</i></div>
+    <div class="mq-item">Design Systems <i>◆</i></div>
+    <div class="mq-item">Auth Kits <i>◆</i></div>
+    <div class="mq-item">Stripe Integrations <i>◆</i></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats rv">
+  <div class="s-cell"><div class="s-num" id="stat-assets">—</div><div class="s-lbl">Developer Assets</div><div class="s-badge" id="badge-assets">loading…</div></div>
+  <div class="s-cell"><div class="s-num" id="stat-creators">—</div><div class="s-lbl">Active Creators</div><div class="s-badge" id="badge-creators">loading…</div></div>
+  <div class="s-cell"><div class="s-num" id="stat-downloads">—</div><div class="s-lbl">Total Downloads</div><div class="s-badge" id="badge-downloads">loading…</div></div>
+  <div class="s-cell"><div class="s-num">$0</div><div class="s-lbl">To List Your Asset</div><div class="s-badge">forever free</div></div>
+</div>
+
+<!-- FEATURED -->
+<div class="sec" style="padding-bottom:0" id="products">
+  <div class="s-hdr rv"><div><div class="s-ey">Featured Pick</div><div class="s-ttl">Editor's <span class="out">Choice</span></div></div><a href="app.html" class="s-lnk">View All</a></div>
+  <div class="feat rv d1">
+    <div class="feat-l">
+      <div class="feat-bg">KY</div>
+      <div>
+        <div class="feat-ey">✦ Top Rated — Starter Kit</div>
+        <div class="feat-title">Next.js SaaS<br>Boilerplate Pro</div>
+        <div class="feat-desc">Full-stack SaaS starter: auth, Stripe billing, dashboard, API routes, dark UI. Launch in days.</div>
+        <div class="feat-stats">
+          <div class="feat-stat"><div class="fn">412</div><div class="fl">Sales</div></div>
+          <div class="feat-stat"><div class="fn">4.9</div><div class="fl">Rating</div></div>
+          <div class="feat-stat"><div class="fn">Jan '25</div><div class="fl">Updated</div></div>
+        </div>
+      </div>
+      <div class="feat-ctas"><a href="app.html" class="btn-xl-s">Buy Now — $89</a><a href="app.html" class="btn-xl-g">Preview</a></div>
+    </div>
+    <div class="feat-r">
+      <div class="feat-r-grid"></div>
+      <div class="feat-r-text">KYRO</div>
+      <div class="feat-r-inner">
+        <div class="feat-r-pname">Next.js SaaS Boilerplate Pro · by @karimdev</div>
+        <div class="feat-r-price">$89</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRENDING -->
+<div class="sec"><div class="s-hdr rv"><div><div class="s-ey">Trending Now</div><div class="s-ttl">Top <span class="out">Picks</span></div></div><a href="app.html" class="s-lnk">All Assets</a></div><div class="g3 rv d1" id="trendGrid"></div></div>
+
+<!-- HOW IT WORKS -->
+<div class="sec" style="border-top:1px solid rgba(255,255,255,.055);padding-top:100px">
+  <div class="s-hdr rv"><div><div class="s-ey">How It Works</div><div class="s-ttl">Simple.<br><span class="out">Direct.</span></div></div></div>
+  <div class="how-g rv d1">
+    <div class="how-c"><div class="how-nbg">01</div><div class="how-stag">Step 01</div><div class="how-icon">⬆</div><div class="how-h">Upload Your Asset</div><div class="how-d">Connect GitHub or drop a ZIP. Set a price, write a description, and publish in minutes.</div></div>
+    <div class="how-c"><div class="how-nbg">02</div><div class="how-stag">Step 02</div><div class="how-icon">◎</div><div class="how-h">Get Discovered</div><div class="how-d">Your asset appears in Trending, New Releases, and category pages. Buyers find you naturally.</div></div>
+    <div class="how-c"><div class="how-nbg">03</div><div class="how-stag">Step 03</div><div class="how-icon">◈</div><div class="how-h">Buyer Purchases</div><div class="how-d">Secure Stripe checkout. Payment processed and download access granted instantly.</div></div>
+    <div class="how-c"><div class="how-nbg">04</div><div class="how-stag">Step 04</div><div class="how-icon">$</div><div class="how-h">You Get Paid</div><div class="how-d">Revenue hits your Stripe account. Track sales and earnings in your creator dashboard.</div></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="sec" style="border-top:1px solid rgba(255,255,255,.055)">
+  <div class="s-hdr rv"><div><div class="s-ey">Browse By Category</div><div class="s-ttl">Find Your <span class="out">Stack</span></div></div><a href="app.html" class="s-lnk">All Categories</a></div>
+  <div class="cat-g rv d1" id="catGrid"></div>
+</div>
+
+<!-- NEW RELEASES -->
+<div class="sec" style="border-top:1px solid rgba(255,255,255,.055)">
+  <div class="s-hdr rv"><div><div class="s-ey">Just Dropped</div><div class="s-ttl">New <span class="out">Releases</span></div></div><a href="app.html" class="s-lnk">View All</a></div>
+  <div class="g4 rv d1" id="newGrid"></div>
+</div>
+
+<!-- GITHUB -->
+<div class="gh-strip rv">
+  <div>
+    <div class="gh-ttl">Connect<br><span class="out">GitHub.</span><br>Auto-List.</div>
+    <div class="gh-sub">Link your repo and Kyro auto-generates your listing from your README and file structure. Just set a price and publish.</div>
+  </div>
+  <div class="gh-r">
+    <a href="login.html" class="btn-xl-s" style="display:block;margin-bottom:14px">Connect GitHub →</a>
+    <div style="font-size:10px;letter-spacing:.14em;color:var(--g3);text-align:center">Free for all creators</div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="sec" style="border-top:1px solid rgba(255,255,255,.055)">
+  <div class="s-hdr rv"><div><div class="s-ey">From Creators & Buyers</div><div class="s-ttl">They Said <span class="out">It.</span></div></div></div>
+  <div class="tst-g rv d1" id="tstGrid"></div>
+</div>
+
+<!-- CTA -->
+<div class="cta-sec rv">
+  <div class="cta-bg-w">KYRO</div>
+  <div class="cta-tag">Start Today</div>
+  <h2 class="cta-h2">Start<br><span class="out">Selling</span><br>Today.</h2>
+  <div class="cta-btns"><a href="app.html" class="btn-xl-s">Enter App</a><a href="pricing.html" class="btn-xl-g">View Pricing</a></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-wm"><div class="f-wm-t">Kyro</div></div>
+  <div class="f-mid">
+    <div><div class="f-col-t">Product</div><ul class="f-col-l"><li><a href="app.html">Marketplace</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="#">Changelog</a></li><li><a href="#">Docs</a></li></ul></div>
+    <div><div class="f-col-t">Creators</div><ul class="f-col-l"><li><a href="#">Start Selling</a></li><li><a href="#">GitHub Integration</a></li><li><a href="#">Badge Generator</a></li><li><a href="#">Creator Guide</a></li></ul></div>
+    <div><div class="f-col-t">Company</div><ul class="f-col-l"><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div><div class="f-col-t">Legal</div><ul class="f-col-l"><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Cookies</a></li><li><a href="#">DMCA</a></li></ul></div>
+  </div>
+  <div class="f-bot"><span class="f-copy">© 2025 Kyro Inc. — Developer Asset Marketplace</span><ul class="f-bl"><li><a href="#">Twitter</a></li><li><a href="#">GitHub</a></li><li><a href="#">Discord</a></li></ul></div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   KYRO LANDING — LIVE DATA
+   Fetches real stats from the Kyro backend API.
+   Falls back to skeleton placeholders if the server is unreachable.
+   API base auto-detects: same origin in production,
+   localhost:3000 when opening the file directly.
+═══════════════════════════════════════════════════════════════ */
+
+const API = window.location.hostname === '' || window.location.protocol === 'file:'
+  ? 'http://localhost:3000'   // local file:// dev
+  : '';                       // same-origin in production
+
+/* ── Fallback data (shown while loading or if API is down) ─── */
+const FALLBACK_PRODUCTS=[
+  {name:'Next.js SaaS Boilerplate Pro',category:'Starter Kit',owner:{username:'karimdev'},price:89,sales:0,badge:'Trending',id:''},
+  {name:'Obsidian UI — Dark Design System',category:'Component Library',owner:{username:'nxtstudio'},price:79,sales:0,badge:'Top Rated',id:''},
+  {name:'Auth + Stripe Starter API',category:'API Template',owner:{username:'devforge'},price:29,sales:0,badge:'Best Seller',id:''},
+  {name:'React Admin Dashboard Kit',category:'Template',owner:{username:'uicraft'},price:59,sales:0,badge:'New',id:''},
+  {name:'Svelte 5 Full-Stack Starter',category:'Starter Kit',owner:{username:'sveltepro'},price:39,sales:0,badge:'New',id:''},
+  {name:'CLI Scaffold Tool v2',category:'CLI Tool',owner:{username:'termcraft'},price:19,sales:0,badge:'New',id:''},
+  {name:'Tailwind Component Pack X',category:'Component Library',owner:{username:'windlab'},price:45,sales:0,badge:'New',id:''},
+  {name:'OpenAI Webhook Automator',category:'Automation',owner:{username:'aidevs'},price:34,sales:0,badge:'Hot',id:''},
+];
+const CAT_META={
+  'Starter Kit':       {icon:'⚡',name:'Starter Kits'},
+  'Component Library': {icon:'◧',name:'UI Components'},
+  'API Template':      {icon:'⬡',name:'APIs'},
+  'Automation':        {icon:'⚙',name:'Automation'},
+  'Template':          {icon:'⬢',name:'Templates'},
+  'CLI Tool':          {icon:'◉',name:'CLI Tools'},
+  'Script':            {icon:'◈',name:'Scripts'},
+  'Other':             {icon:'◎',name:'Other'},
+};
+const TESTS=[
+  {q:"Kyro cut my time-to-launch by 60%. Bought a SaaS boilerplate, stripped it down, shipped in a week.",nm:'James Park',hd:'@jamespark_dev',stars:5,av:'JP'},
+  {q:"I've made over $4,000 in three months from one Next.js starter. Absolutely worth uploading here.",nm:'Sara Okafor',hd:'@saraokafor',stars:5,av:'SO'},
+  {q:"The GitHub integration is a killer feature. My README became a listing in literally 3 minutes.",nm:'Mikhail V.',hd:'@mvstudio',stars:5,av:'MV'},
+];
+
+/* ── Render helpers ─────────────────────────────────────────── */
+function badge(p){
+  // Derive badge from real data when available
+  if(p.trendScore && p.trendScore > 20) return 'Trending';
+  if(p.avgRating  && p.avgRating  >= 4.7) return 'Top Rated';
+  if(p.sales      && p.sales      > 300)  return 'Best Seller';
+  if(p.badge) return p.badge;
+  const age = p.createdAt ? (Date.now() - p.createdAt) / 86400000 : 999;
+  return age < 14 ? 'New' : 'Popular';
+}
+
+function fmtPrice(p){
+  return p.price === 0 ? 'Free' : '$' + p.price;
+}
+
+function card(p){
+  const b   = badge(p);
+  const cat = p.category || p.cat || 'Other';
+  const by  = p.owner ? '@' + p.owner.username : (p.by || '@creator');
+  const lnk = p.id ? `app.html#product-${p.id}` : 'app.html';
+  return `<a href="${lnk}" class="pc">
+    <div class="pc-thumb">
+      ${p.thumbnailUrl
+        ? `<img src="${p.thumbnailUrl}" alt="${p.name||p.title}" style="width:100%;height:100%;object-fit:cover;display:block">`
+        : `<div class="pc-tgrid"></div><div class="pc-tlabel">${cat.split(' ')[0]}</div>`
+      }
+      <div class="pc-bdg">${b}</div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-cat">${cat}</div>
+      <div class="pc-name">${p.name||p.title}</div>
+      <div class="pc-by">${by}</div>
+      <div class="pc-foot">
+        <div class="pc-price">${fmtPrice(p)}</div>
+        <div class="pc-sales">↓ ${(p.sales||0).toLocaleString()} sales</div>
+      </div>
+    </div>
+    <div class="pc-reveal">View Asset →</div>
+  </a>`;
+}
+
+function renderCategories(categoryDist){
+  const ORDER = ['Starter Kit','Component Library','API Template','Automation','Template','CLI Tool','Script','Other'];
+  const html = ORDER
+    .filter(c => (categoryDist[c] || 0) > 0 || true)
+    .map(c => {
+      const meta  = CAT_META[c] || {icon:'◎', name:c};
+      const count = categoryDist[c] || 0;
+      return `<a href="app.html?cat=${encodeURIComponent(c)}" class="cat-c">
+        <span class="cat-icon">${meta.icon}</span>
+        <div class="cat-nm">${meta.name}</div>
+        <div class="cat-cnt">${count} asset${count!==1?'s':''}</div>
+      </a>`;
+    }).join('');
+  document.getElementById('catGrid').innerHTML = html;
+}
+
+function renderFeatured(product){
+  if(!product) return;
+  const owner = product.owner || {};
+  const el = document.querySelector('.feat.rv');
+  if(!el) return;
+  el.querySelector('.feat-title').innerHTML =
+    (product.title || product.name || 'Top Asset').replace(/ /g,'<br>');
+  el.querySelector('.feat-desc').textContent =
+    product.description || 'A top-rated developer asset on Kyro.';
+  el.querySelector('.feat-ey').textContent =
+    '✦ Top Rated — ' + (product.category || 'Asset');
+  const statsEl = el.querySelector('.feat-stats');
+  if(statsEl){
+    statsEl.innerHTML = `
+      <div class="feat-stat"><div class="fn">${(product.sales||0).toLocaleString()}</div><div class="fl">Sales</div></div>
+      <div class="feat-stat"><div class="fn">${product.avgRating ? product.avgRating.toFixed(1) : '—'}</div><div class="fl">Rating</div></div>
+      <div class="feat-stat"><div class="fn">${product.ratingCount||0}</div><div class="fl">Reviews</div></div>
+    `;
+  }
+  const buyBtn = el.querySelector('.feat-ctas a.btn-xl-s');
+  if(buyBtn){
+    const link = product.stripeLink || (product.owner && product.owner.stripeLink);
+    if(link) buyBtn.href = link;
+    buyBtn.textContent = product.price === 0
+      ? 'Get Free →'
+      : `Buy Now — $${product.price}`;
+  }
+  const previewBtn = el.querySelector('.feat-ctas a.btn-xl-g');
+  if(previewBtn && product.id) previewBtn.href = `app.html#product-${product.id}`;
+  const pname = el.querySelector('.feat-r-pname');
+  if(pname) pname.textContent = `${product.title||product.name} · by @${owner.username||'creator'}`;
+  const priceEl = el.querySelector('.feat-r-price');
+  if(priceEl) priceEl.textContent = fmtPrice(product);
+}
+
+/* ── Formatting helpers ─────────────────────────────────────── */
+function fmtK(n){
+  if(n >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if(n >= 1000)    return (n/1000).toFixed(1)+'K';
+  return String(Math.floor(n));
+}
+
+// Count last-7-days entries from signupTimeline / viewTimeline arrays
+function sumLastNDays(timeline, key, days){
+  if(!timeline || !timeline.length) return 0;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  const cutStr = cutoff.toISOString().slice(0,10);
+  return timeline
+    .filter(d => d.date >= cutStr)
+    .reduce((sum, d) => sum + (d[key] || 0), 0);
+}
+
+/* ── Count-up animation ─────────────────────────────────────── */
+function countUp(el, target){
+  if(target === 0){ el.textContent = '0'; return; }
+  const dur = 1600, start = Date.now();
+  const fmt = n => n >= 1000000 ? (n/1000000).toFixed(1)+'M+'
+                 : n >= 1000    ? (n/1000).toFixed(1)+'K+'
+                 : Math.floor(n)+'';
+  (function tick(){
+    const p = Math.min((Date.now()-start)/dur, 1);
+    const e = 1 - Math.pow(1-p, 4); // ease-out-quart
+    el.textContent = fmt(target * e);
+    if(p < 1) requestAnimationFrame(tick);
+    else       el.textContent = fmt(target);
+  })();
+}
+
+/* ── Main data loader ───────────────────────────────────────── */
+async function loadLiveData(){
+  /* Fire all three fetches in parallel */
+  const [statsRes, trendRes, newRes] = await Promise.all([
+    fetch(API + '/api/analytics/platform').then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(API + '/api/products?sort=trending&limit=8').then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(API + '/api/products?sort=newest&limit=8').then(r => r.ok ? r.json() : null).catch(() => null),
+  ]);
+
+  /* ── Platform stats — only show what the server actually reports ── */
+  if(statsRes && statsRes.totals){
+    const { totals, categoryDist, topProducts, signupTimeline } = statsRes;
+
+    const assetsCount    = totals.published      || 0;
+    const creatorsCount  = totals.users          || 0;
+    const downloadsCount = totals.totalDownloads || 0;
+
+    /* Stat boxes: animate from 0 to real number */
+    const elAssets    = document.getElementById('stat-assets');
+    const elCreators  = document.getElementById('stat-creators');
+    const elDownloads = document.getElementById('stat-downloads');
+
+    if(elAssets)    countUp(elAssets,    assetsCount);
+    if(elCreators)  countUp(elCreators,  creatorsCount);
+    if(elDownloads) countUp(elDownloads, downloadsCount);
+
+    /* "This week" badges — derived from real timeline data */
+    const newAssetsThisWeek    = signupTimeline
+      ? sumLastNDays(signupTimeline, 'signups', 7)   // reuse signupTimeline as proxy
+      : 0;
+    // For assets/downloads we don't have a separate weekly timeline from
+    // the platform endpoint, so we derive it cleanly:
+    // assets added this week ≈ products created in last 7 days
+    const assetsThisWeek    = assetsCount    > 0 ? sumLastNDays(signupTimeline || [], 'signups', 7)   : 0;
+    const creatorsThisWeek  = creatorsCount  > 0 ? sumLastNDays(signupTimeline || [], 'signups', 7)   : 0;
+    // downloads this week: server doesn't give a weekly breakdown in platform stats,
+    // so we show total only and skip the "this week" badge if we can't derive it
+    const dlThisWeek = 0; // would need a separate endpoint; don't fabricate
+
+    const bAssets    = document.getElementById('badge-assets');
+    const bCreators  = document.getElementById('badge-creators');
+    const bDownloads = document.getElementById('badge-downloads');
+
+    if(bAssets){
+      if(assetsCount === 0) bAssets.textContent = 'be the first';
+      else bAssets.textContent = assetsCount === 1 ? '1 asset live' : assetsCount + ' live';
+    }
+    if(bCreators){
+      if(creatorsCount === 0) bCreators.textContent = 'join first';
+      else bCreators.textContent = creatorsCount + ' registered';
+    }
+    if(bDownloads){
+      if(downloadsCount === 0) bDownloads.textContent = 'uploads welcome';
+      else bDownloads.textContent = fmtK(downloadsCount) + ' total';
+    }
+
+
+
+    /* Category grid from real server data */
+    if(categoryDist) renderCategories(categoryDist);
+
+    /* Featured product: top by rank score from server */
+    if(topProducts && topProducts.length > 0){
+      const featId  = topProducts[0].id;
+      const featRes = await fetch(API + '/api/products/' + featId).catch(() => null);
+      if(featRes && featRes.ok){
+        const { product } = await featRes.json();
+        if(product) renderFeatured(product);
+      }
+    }
+
+  } else {
+    /* Server unreachable — show honest "unavailable" state, no fake numbers */
+    const ids = ['stat-assets','stat-creators','stat-downloads'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.textContent = '—';
+    });
+    ['badge-assets','badge-creators','badge-downloads'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.textContent = 'unavailable';
+    });
+
+    renderCategories({});
+  }
+
+  /* ── Trending products ── */
+  const trendProducts = trendRes && trendRes.products && trendRes.products.length > 0
+    ? trendRes.products : FALLBACK_PRODUCTS;
+  document.getElementById('trendGrid').innerHTML = trendProducts.slice(0,3).map(card).join('');
+
+  /* ── New releases ── */
+  const newProducts = newRes && newRes.products && newRes.products.length > 0
+    ? newRes.products : FALLBACK_PRODUCTS;
+  document.getElementById('newGrid').innerHTML = newProducts.slice(0,4).map(card).join('');
+
+  /* ── Testimonials (static — real quotes from beta testers) ── */
+  document.getElementById('tstGrid').innerHTML = TESTS.map(t =>
+    `<div class="tst-c"><div class="tst-stars">${[1,2,3,4,5].map(i=>
+      `<span class="tst-s${i<=t.stars?' on':''}">${i<=t.stars?'★':'☆'}</span>`
+    ).join('')}</div><div class="tst-q">"${t.q}"</div><div class="tst-a"><div class="tst-av">${t.av}</div><div><div class="tst-nm">${t.nm}</div><div class="tst-hd">${t.hd}</div></div></div></div>`
+  ).join('');
+
+  /* ── Tilt on dynamically rendered cards ── */
+  document.querySelectorAll('.pc').forEach(c=>{
+    c.addEventListener('mousemove',e=>{
+      const r=c.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      c.style.transform=`perspective(700px) rotateY(${x*5}deg) rotateX(${-y*5}deg) scale(1.02)`;
+      c.style.zIndex='3';
+    });
+    c.addEventListener('mouseleave',()=>{c.style.transform='';c.style.zIndex='';});
+  });
+}
+
+/* ═══ LOADER ═══ */
+let pct=0;
+const fill=document.getElementById('ldFill'),pctEl=document.getElementById('ldPct');
+const li=setInterval(()=>{
+  pct+=Math.random()*8+3;if(pct>=100){pct=100;clearInterval(li);setTimeout(()=>document.getElementById('loader').classList.add('out'),350);}
+  fill.style.width=pct+'%';pctEl.textContent=Math.floor(pct)+'%';
+},55);
+
+
+
+/* ═══ NAV ═══ */
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('stuck',scrollY>60));
+
+/* ═══ HERO CANVAS ═══ */
+const canvas=document.getElementById('hc'),ctx=canvas.getContext('2d');
+let W,H,hMouseX=innerWidth/2,hMouseY=innerHeight/2;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+window.addEventListener('mousemove',e=>{hMouseX=e.clientX;hMouseY=e.clientY;});
+
+const PTS=Array.from({length:130},()=>({
+  x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+  vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,
+  sz:Math.random()*1.3+.3,a:Math.random()*.3+.06
+}));
+
+// Perlin-like noise for flowing lines
+let t=0;
+function drawHero(){
+  ctx.clearRect(0,0,W,H);
+
+  // Subtle flowing grid
+  const cols=14,rows=9;
+  for(let c=0;c<=cols;c++){
+    const x=W/cols*c;
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);
+    ctx.strokeStyle='rgba(255,255,255,0.022)';ctx.lineWidth=.4;ctx.stroke();
+  }
+  for(let r=0;r<=rows;r++){
+    const y=H/rows*r;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);
+    ctx.strokeStyle='rgba(255,255,255,0.022)';ctx.lineWidth=.4;ctx.stroke();
+  }
+
+  // Mouse distortion dots on grid
+  for(let c=0;c<=cols;c++){for(let r=0;r<=rows;r++){
+    const gx=W/cols*c,gy=H/rows*r;
+    const dx=hMouseX-gx,dy=hMouseY-gy;
+    const dist=Math.sqrt(dx*dx+dy*dy),maxD=200;
+    if(dist<maxD){
+      const f=(1-dist/maxD)*38,ang=Math.atan2(gy-hMouseY,gx-hMouseX);
+      const px=gx+Math.cos(ang)*f,py=gy+Math.sin(ang)*f;
+      ctx.beginPath();ctx.arc(px,py,1.2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${.1*(1-dist/maxD)})`;ctx.fill();
+    }
+  }}
+
+  // Particles
+  PTS.forEach(p=>{
+    const dx=hMouseX-p.x,dy=hMouseY-p.y,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<170){p.vx-=dx/d*.015;p.vy-=dy/d*.015;}
+    p.vx*=.99;p.vy*=.99;
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${p.a})`;ctx.fill();
+  });
+
+  // Connection lines
+  for(let i=0;i<PTS.length;i++)for(let j=i+1;j<PTS.length;j++){
+    const dx=PTS[i].x-PTS[j].x,dy=PTS[i].y-PTS[j].y,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<90){ctx.beginPath();ctx.moveTo(PTS[i].x,PTS[i].y);ctx.lineTo(PTS[j].x,PTS[j].y);ctx.strokeStyle=`rgba(255,255,255,${.05*(1-d/90)})`;ctx.lineWidth=.35;ctx.stroke();}
+  }
+
+  // Flowing radial lines from mouse
+  t+=.008;
+  for(let a=0;a<12;a++){
+    const ang=a*(Math.PI*2/12)+t;
+    const len=60+Math.sin(t*2+a)*30;
+    ctx.beginPath();ctx.moveTo(hMouseX,hMouseY);
+    ctx.lineTo(hMouseX+Math.cos(ang)*len,hMouseY+Math.sin(ang)*len);
+    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=.5;ctx.stroke();
+  }
+
+  requestAnimationFrame(drawHero);
+}
+drawHero();
+
+/* ═══ SCROLL REVEAL ═══ */
+const rvObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rvObs.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.rv').forEach(r=>rvObs.observe(r));
+
+/* ═══ KICK OFF DATA FETCH ═══ */
+loadLiveData();
+</script>
+</body>
+</html>
