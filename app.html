@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyro — Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#000;--white:#fff;--g1:#f2f2f2;--g2:#aaa;--g3:#555;--g4:#1e1e1e;--g5:#0d0d0d;--sb:260px;--trust-green:#22c55e;--trust-yellow:#eab308;--trust-red:#ef4444}
+body{background:var(--black);color:var(--white);font-family:'DM Mono',monospace;overflow-x:hidden;cursor:none}
+#cur{position:fixed;width:8px;height:8px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .15s,height .15s}
+#cur-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(255,255,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference}
+body.ch #cur{width:4px;height:4px}body.ch #cur-ring{width:56px;height:56px}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:8999;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");background-size:300px;opacity:.5}
+
+/* SIDEBAR */
+.sb{position:fixed;top:0;left:0;width:var(--sb);height:100vh;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;background:rgba(0,0,0,.97);backdrop-filter:blur(14px);z-index:50;overflow-y:auto}
+.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-track{background:transparent}.sb::-webkit-scrollbar-thumb{background:var(--g4)}
+.sb-logo{padding:26px 22px;border-bottom:1px solid rgba(255,255,255,.055);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.22em;text-decoration:none;color:#fff;display:block}
+.sb-search{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.055)}
+.sb-si{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);transition:border-color .2s}
+.sb-si:focus-within{border-color:rgba(255,255,255,.2)}
+.sb-si input{background:none;border:none;outline:none;color:#fff;font-family:'DM Mono',monospace;font-size:11px;width:100%;cursor:none}
+.sb-si input::placeholder{color:var(--g3)}
+.sb-si span{color:var(--g3);font-size:12px;flex-shrink:0}
+.sb-sec{padding:16px 16px 4px}
+.sb-sec-lbl{font-size:9px;letter-spacing:.26em;color:var(--g3);text-transform:uppercase;margin-bottom:6px;padding:0 6px}
+.sb-nav{list-style:none}
+.sb-nav li a{display:flex;align-items:center;gap:9px;padding:8px 6px;font-size:11px;letter-spacing:.04em;color:var(--g2);text-decoration:none;transition:color .2s,background .2s;cursor:none}
+.sb-nav li a:hover{color:#fff;background:rgba(255,255,255,.04)}
+.sb-nav li a.act{color:#fff;background:rgba(255,255,255,.06)}
+.sb-nav li a .ic{font-size:12px;opacity:.6;width:16px;text-align:center;flex-shrink:0}
+.sb-foot{margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.055)}
+.u-card{display:flex;align-items:center;gap:10px;padding:8px;transition:background .2s;cursor:none}
+.u-card:hover{background:rgba(255,255,255,.04)}
+.u-av{width:30px;height:30px;background:var(--g4);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;flex-shrink:0}
+.u-nm{font-size:11px;color:#fff}
+.u-pl{font-size:10px;color:var(--g3);letter-spacing:.08em}
+
+/* MARKET BUTTON */
+.market-btn{margin:12px 16px 4px;display:flex;align-items:center;gap:9px;padding:11px 14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:none;transition:all .2s;text-decoration:none;width:calc(100% - 32px)}
+.market-btn:hover,.market-btn.act{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.3)}
+.market-btn .ic{font-size:13px;opacity:.7}
+
+/* MAIN */
+.main{margin-left:var(--sb);min-height:100vh}
+.topbar{position:sticky;top:0;z-index:40;padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.055);background:rgba(0,0,0,.93);backdrop-filter:blur(14px)}
+.tb-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;text-transform:uppercase}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{padding:7px 16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.tb-g{border:1px solid rgba(255,255,255,.12);color:var(--g2);background:transparent}
+.tb-g:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.tb-s{border:1px solid #fff;color:#000;background:#fff}
+.tb-s:hover{background:transparent;color:#fff}
+.tb-icon-btn{width:36px;height:36px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--g2);display:flex;align-items:center;justify-content:center;cursor:none;transition:all .2s;position:relative}
+.tb-icon-btn:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:#fff;border-radius:50%}
+
+/* HERO STRIP */
+.hs{padding:40px 32px;border-bottom:1px solid rgba(255,255,255,.055);position:relative;overflow:hidden}
+.hs-bg{position:absolute;right:-30px;top:-20px;font-family:'Bebas Neue',sans-serif;font-size:160px;color:rgba(255,255,255,.02);letter-spacing:-.04em;text-transform:uppercase;pointer-events:none;line-height:1}
+.hs-tag{font-size:10px;letter-spacing:.26em;color:var(--g3);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hs-tag::before{content:'';width:14px;height:1px;background:var(--g3);display:block}
+.hs-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4vw,64px);letter-spacing:.01em;text-transform:uppercase;line-height:.88;margin-bottom:16px}
+.hs-title .out{-webkit-text-stroke:1px rgba(255,255,255,.24);color:transparent}
+.hs-meta{font-size:12px;color:var(--g2);max-width:520px;line-height:1.6}
+
+/* FILTER */
+.filter-bar{padding:0 32px;border-bottom:1px solid rgba(255,255,255,.055);display:flex;align-items:center;overflow-x:auto}
+.f-tab{padding:14px 18px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);white-space:nowrap;cursor:none;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .2s;font-family:'DM Mono',monospace;margin-bottom:-1px}
+.f-tab:hover{color:#fff}
+.f-tab.on{color:#fff;border-bottom-color:#fff}
+.sort-wrap{margin-left:auto;display:flex;align-items:center;gap:8px;padding-left:20px;flex-shrink:0}
+.sort-lbl{font-size:9px;color:var(--g3);letter-spacing:.18em;text-transform:uppercase}
+.sort-sel{background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--g2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;outline:none;cursor:none}
+.sort-sel option{background:#000}
+
+/* PRODUCT WRAP */
+.prod-wrap{padding:32px}
+.sec-row{margin-bottom:48px}
+.row-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.055)}
+.row-tag{font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;margin-bottom:4px}
+.row-ttl{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.04em;text-transform:uppercase}
+.row-lnk{font-size:10px;color:var(--g3);text-decoration:none;letter-spacing:.12em;text-transform:uppercase;transition:color .2s;display:flex;align-items:center;gap:6px;cursor:none}
+.row-lnk:hover{color:#fff}
+.row-lnk::after{content:'→'}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1px;background:rgba(255,255,255,.055)}
+.pc{background:#000;text-decoration:none;color:#fff;display:block;position:relative;overflow:hidden;transition:background .25s;cursor:none}
+.pc:hover{background:var(--g5)}
+.pc:hover .pc-r{opacity:1;transform:translateY(0)}
+.pc:hover .pc-tg{opacity:.4}
+.pc-th{aspect-ratio:16/9;position:relative;overflow:hidden;background:var(--g4)}
+.pc-tg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:22px 22px;transition:opacity .3s}
+.pc-tl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.1);text-transform:uppercase}
+.pc-bdg{position:absolute;top:10px;left:10px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;padding:3px 7px;background:rgba(0,0,0,.85);border:1px solid rgba(255,255,255,.1);color:var(--g2)}
+.pc-body{padding:16px 18px}
+.pc-cat{font-size:9px;letter-spacing:.2em;color:var(--g3);text-transform:uppercase;margin-bottom:4px}
+.pc-nm{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;line-height:1.2;margin-bottom:4px}
+.pc-by{font-size:10px;color:var(--g3)}
+.pc-trust{margin-top:6px}
+.trust-badge{display:inline-flex;align-items:center;gap:4px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border:1px solid;border-radius:0}
+.trust-green{color:var(--trust-green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07)}
+.trust-yellow{color:var(--trust-yellow);border-color:rgba(234,179,8,.3);background:rgba(234,179,8,.07)}
+.trust-red{color:var(--trust-red);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.07)}
+.pc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}
+.pc-price{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:.04em}
+.pc-sales{font-size:9px;color:var(--g3);letter-spacing:.1em}
+.pc-r{position:absolute;bottom:0;left:0;right:0;background:#fff;color:#000;padding:9px;text-align:center;font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:0;transform:translateY(5px);transition:all .2s}
+
+/* FEATURED BANNER */
+.feat-banner{margin-bottom:40px;border:1px solid rgba(255,255,255,.07);padding:40px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:32px;position:relative;overflow:hidden;transition:background .3s;cursor:none}
+.feat-banner:hover{background:var(--g5)}
+.fb-bg{position:absolute;right:-15px;top:-15px;font-family:'Bebas Neue',sans-serif;font-size:100px;color:rgba(255,255,255,.022);letter-spacing:-.04em;text-transform:uppercase;pointer-events:none}
+.fb-badge{display:inline-block;font-size:9px;letter-spacing:.2em;text-transform:uppercase;padding:3px 8px;border:1px solid rgba(255,255,255,.1);color:var(--g3);margin-bottom:14px}
+.fb-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.02em;text-transform:uppercase;line-height:.95;margin-bottom:8px}
+.fb-desc{font-size:12px;color:var(--g2);line-height:1.6;max-width:480px}
+.fb-right{text-align:right;flex-shrink:0}
+.fb-price{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:.02em;margin-bottom:12px}
+.fb-buy{display:block;padding:12px 26px;background:#fff;color:#000;border:1px solid #fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:all .2s;cursor:none}
+.fb-buy:hover{background:transparent;color:#fff}
+
+/* STORE PAGE */
+.store-banner{position:relative;overflow:hidden;min-height:260px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;justify-content:flex-end}
+.store-banner-bg{position:absolute;inset:0;background:var(--g4)}
+.store-banner-edit{position:absolute;top:16px;right:16px;padding:8px 14px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.7);color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .2s;backdrop-filter:blur(8px)}
+.store-banner-edit:hover{border-color:#fff}
+.store-info{position:relative;z-index:2;padding:32px;display:flex;align-items:flex-end;gap:24px}
+.store-av{width:72px;height:72px;background:var(--g5);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:26px;flex-shrink:0}
+.store-meta{flex:1}
+.store-name{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:.03em;text-transform:uppercase;line-height:1;margin-bottom:6px}
+.store-handle{font-size:11px;color:var(--g3);letter-spacing:.12em;margin-bottom:10px}
+.store-stats{display:flex;gap:24px}
+.st-stat{text-align:center}
+.st-stat-n{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1}
+.st-stat-l{font-size:9px;letter-spacing:.18em;color:var(--g3);text-transform:uppercase}
+.store-trust{display:flex;align-items:center;gap:8px;margin-left:auto}
+.trust-score-lg{padding:12px 18px;border:1px solid;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-align:center}
+.trust-score-lg .ts-num{font-family:'Bebas Neue',sans-serif;font-size:28px;display:block;line-height:1;margin-bottom:3px}
+.trust-score-lg .ts-lbl{font-size:8px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+
+/* STORE EDIT */
+.edit-banner-zone{position:relative;overflow:hidden;cursor:none}
+.edit-banner-zone .banner-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .3s;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#fff;z-index:3}
+.edit-banner-zone:hover .banner-overlay{opacity:1}
+.edit-section{padding:32px;border-bottom:1px solid rgba(255,255,255,.07)}
+.edit-section-title{font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.edit-section-title::before{content:'';width:12px;height:1px;background:var(--g3)}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.edit-field{margin-bottom:0}
+.e-lbl{font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;margin-bottom:8px;display:block}
+.e-inp{width:100%;padding:11px 13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color .2s,background .2s;cursor:none;resize:vertical}
+.e-inp:focus{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+.e-inp::placeholder{color:var(--g3)}
+.e-textarea{min-height:90px}
+.e-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.color-sw{width:28px;height:28px;border:1px solid transparent;transition:all .2s;cursor:none}
+.color-sw.sel{border-color:#fff;transform:scale(1.1)}
+.banner-preview{width:100%;height:120px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--g3);letter-spacing:.14em;text-transform:uppercase;transition:background .3s;position:relative;overflow:hidden;margin-top:12px}
+.banner-preview .bp-text{font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:.03em;opacity:.08;pointer-events:none}
+
+/* UPLOAD/PUBLISH FLOW */
+.upload-flow{max-width:680px;margin:0 auto;padding:32px}
+.flow-steps{display:flex;gap:0;margin-bottom:40px;border:1px solid rgba(255,255,255,.1)}
+.flow-step{flex:1;padding:14px;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--g3);border-right:1px solid rgba(255,255,255,.07);transition:all .2s;position:relative}
+.flow-step:last-child{border-right:none}
+.flow-step.done{color:var(--g2)}
+.flow-step.done::after{content:'';display:block;width:100%;height:2px;background:rgba(255,255,255,.2);position:absolute;bottom:0;left:0}
+.flow-step.active{color:#fff}
+.flow-step.active::after{content:'';display:block;width:100%;height:2px;background:#fff;position:absolute;bottom:0;left:0}
+.flow-step-num{font-family:'Bebas Neue',sans-serif;font-size:18px;display:block;margin-bottom:3px}
+.upload-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);padding:32px;margin-bottom:16px}
+.upload-card-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:20px}
+.upload-zone{border:1px dashed rgba(255,255,255,.15);padding:40px;text-align:center;transition:all .2s;cursor:none}
+.upload-zone:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.02)}
+.uz-icon{font-size:28px;margin-bottom:12px;opacity:.3}
+.uz-title{font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.uz-sub{font-size:10px;color:var(--g3)}
+.file-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.file-chip{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid rgba(255,255,255,.1);font-size:10px;color:var(--g2);background:rgba(255,255,255,.03)}
+.file-chip button{background:none;border:none;color:var(--g3);cursor:none;font-size:12px;line-height:1;padding:0;transition:color .2s}
+.file-chip button:hover{color:#fff}
+.price-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end}
+.price-input-wrap{position:relative}
+.price-input-wrap::before{content:'$';position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--g3);font-size:13px}
+.price-input-wrap .e-inp{padding-left:28px}
+.cat-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.cat-pill{padding:6px 12px;border:1px solid rgba(255,255,255,.1);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);cursor:none;transition:all .2s;background:transparent;font-family:'DM Mono',monospace}
+.cat-pill:hover{border-color:rgba(255,255,255,.3);color:var(--g2)}
+.cat-pill.sel{border-color:#fff;color:#fff;background:rgba(255,255,255,.06)}
+.scan-badge{display:flex;align-items:center;gap:10px;padding:12px 16px;border:1px solid rgba(34,197,94,.2);background:rgba(34,197,94,.05);margin-top:12px}
+.scan-badge .sb-ico{color:var(--trust-green);font-size:14px}
+.scan-badge .sb-text{font-size:10px;color:var(--g2)}
+.scan-badge .sb-text strong{color:var(--trust-green);font-weight:500}
+.flow-actions{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.btn-primary{padding:12px 28px;background:#fff;color:#000;border:1px solid #fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .22s}
+.btn-primary:hover{background:transparent;color:#fff}
+.btn-ghost{padding:12px 22px;background:transparent;color:var(--g2);border:1px solid rgba(255,255,255,.12);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .22s}
+.btn-ghost:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.publish-success{text-align:center;padding:80px 32px}
+.ps-check{font-size:36px;margin-bottom:20px;opacity:.6}
+.ps-title{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px}
+.ps-sub{font-size:12px;color:var(--g2);max-width:400px;margin:0 auto;line-height:1.7}
+.ps-actions{display:flex;gap:12px;justify-content:center;margin-top:32px}
+.discovery-badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.disc-badge{font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(255,255,255,.12);color:var(--g3)}
+
+/* CHAT */
+.chat-panel{position:fixed;right:0;top:0;width:380px;height:100vh;border-left:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.97);backdrop-filter:blur(14px);z-index:60;transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column}
+.chat-panel.open{transform:translateX(0)}
+.chat-header{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
+.chat-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;text-transform:uppercase}
+.chat-close{background:none;border:none;color:var(--g3);cursor:none;font-size:18px;transition:color .2s;padding:4px}
+.chat-close:hover{color:#fff}
+.chat-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.07)}
+.chat-tab{flex:1;padding:10px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--g3);background:transparent;border:none;cursor:none;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-1px}
+.chat-tab.on{color:#fff;border-bottom-color:#fff}
+.convo-list{flex:1;overflow-y:auto}
+.convo-list::-webkit-scrollbar{width:2px}.convo-list::-webkit-scrollbar-thumb{background:var(--g4)}
+.convo-item{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04);cursor:none;transition:background .2s;display:flex;gap:10px;align-items:flex-start}
+.convo-item:hover{background:rgba(255,255,255,.03)}
+.convo-item.active{background:rgba(255,255,255,.05)}
+.convo-av{width:32px;height:32px;background:var(--g4);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'Syne',sans-serif;font-weight:700;flex-shrink:0}
+.convo-meta{flex:1;min-width:0}
+.convo-name{font-size:11px;color:#fff;margin-bottom:3px}
+.convo-preview{font-size:10px;color:var(--g3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.convo-time{font-size:9px;color:var(--g4);flex-shrink:0}
+.convo-unread{width:6px;height:6px;background:#fff;border-radius:50%;margin-top:5px;flex-shrink:0}
+.chat-window{flex:1;display:flex;flex-direction:column;display:none}
+.chat-window.show{display:flex}
+.convo-list-wrap{flex:1;display:flex;flex-direction:column}
+.convo-list-wrap.hide{display:none}
+.chat-wh{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.chat-back{background:none;border:none;color:var(--g3);cursor:none;font-size:14px;transition:color .2s;margin-right:4px}
+.chat-back:hover{color:#fff}
+.chat-wh-name{font-size:12px;color:#fff;letter-spacing:.06em}
+.chat-wh-sub{font-size:9px;color:var(--g3);letter-spacing:.08em}
+.chat-msgs{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.chat-msgs::-webkit-scrollbar{width:2px}.chat-msgs::-webkit-scrollbar-thumb{background:var(--g4)}
+.msg{max-width:80%}
+.msg.sent{align-self:flex-end}
+.msg.recv{align-self:flex-start}
+.msg-bubble{padding:10px 14px;font-size:11px;line-height:1.5}
+.msg.sent .msg-bubble{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1)}
+.msg.recv .msg-bubble{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.msg-time{font-size:9px;color:var(--g3);margin-top:4px;padding:0 2px}
+.msg.sent .msg-time{text-align:right}
+.chat-input-row{padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:8px}
+.chat-inp{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'DM Mono',monospace;font-size:11px;padding:10px 12px;outline:none;resize:none;transition:border-color .2s;cursor:none;min-height:40px;max-height:100px}
+.chat-inp:focus{border-color:rgba(255,255,255,.25)}
+.chat-inp::placeholder{color:var(--g3)}
+.chat-send{padding:0 14px;background:#fff;color:#000;border:1px solid #fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;cursor:none;transition:all .2s;align-self:flex-end;height:40px;flex-shrink:0}
+.chat-send:hover{background:transparent;color:#fff}
+.support-info{padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)}
+.support-info p{font-size:10px;color:var(--g3);line-height:1.6}
+.support-info strong{color:var(--g2)}
+
+/* ONBOARDING */
+.onboarding-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.onboarding-card{width:560px;background:#000;border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;animation:slideUp .4s both}
+.ob-progress{height:2px;background:rgba(255,255,255,.07);position:relative}
+.ob-progress-fill{height:100%;background:#fff;transition:width .4s}
+.ob-body{padding:48px}
+.ob-step{display:none}
+.ob-step.active{display:block}
+.ob-icon{font-size:32px;margin-bottom:24px;opacity:.5}
+.ob-title{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:.03em;text-transform:uppercase;line-height:.9;margin-bottom:14px}
+.ob-sub{font-size:12px;color:var(--g2);line-height:1.7;margin-bottom:32px}
+.ob-actions{display:flex;justify-content:space-between;align-items:center}
+.ob-skip{font-size:10px;color:var(--g3);text-decoration:none;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:color .2s;background:none;border:none}
+.ob-skip:hover{color:var(--g2)}
+.ob-dots{display:flex;gap:6px}
+.ob-dot{width:6px;height:6px;border:1px solid rgba(255,255,255,.2);transition:all .2s}
+.ob-dot.on{background:#fff;border-color:#fff}
+.stripe-connect-btn{width:100%;padding:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .22s;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px}
+.stripe-connect-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.45)}
+.stripe-connect-btn .stripe-s{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#a5b4fc;letter-spacing:.1em}
+.ob-feature-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.ob-feature{display:flex;align-items:flex-start;gap:12px;font-size:11px;color:var(--g2);line-height:1.5}
+.ob-feature-ic{color:var(--g3);flex-shrink:0;margin-top:1px;font-size:13px}
+.github-connect-btn{width:100%;padding:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .22s;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px}
+.github-connect-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35)}
+
+/* STRIPE REMINDER - repurposed for stripe link reminder */
+.stripe-reminder{padding:14px 20px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.18);display:flex;align-items:center;gap:12px;margin-bottom:1px}
+.sr-text{font-size:10px;color:var(--g2);flex:1}
+.sr-text strong{color:#fff}
+.sr-btn{padding:7px 14px;border:1px solid rgba(34,197,94,.4);background:transparent;color:#86efac;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s;flex-shrink:0}
+.sr-btn:hover{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.7)}
+
+/* GITHUB INTEGRATION */
+.github-section{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);padding:24px;margin-bottom:16px}
+.gh-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.gh-icon{font-size:18px;opacity:.7}
+.gh-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+.gh-status{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.1em;padding:4px 10px;border:1px solid}
+.gh-status.connected{color:var(--trust-green);border-color:rgba(34,197,94,.3)}
+.gh-status.disconnected{color:var(--g3);border-color:rgba(255,255,255,.1)}
+.gh-repos{margin-top:16px}
+.gh-repo{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid rgba(255,255,255,.06);margin-bottom:6px;background:rgba(255,255,255,.02);transition:background .2s}
+.gh-repo:hover{background:rgba(255,255,255,.04)}
+.gh-repo-name{font-size:11px;flex:1}
+.gh-repo-upd{font-size:9px;color:var(--g3);letter-spacing:.08em}
+.gh-repo-link{font-size:9px;color:var(--g3);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;cursor:none}
+.gh-repo-link:hover{color:#fff}
+
+/* TRUST SCORE DETAIL */
+.trust-detail{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);padding:24px;margin-bottom:16px}
+.td-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.td-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+.td-score{display:flex;align-items:baseline;gap:4px}
+.td-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1}
+.td-max{font-size:12px;color:var(--g3)}
+.td-bar-row{margin-bottom:12px}
+.td-bar-label{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:5px}
+.td-bar-label span:last-child{color:var(--g2)}
+.td-bar-bg{height:3px;background:rgba(255,255,255,.07)}
+.td-bar-fill{height:100%;transition:width 1s}
+.td-tip{font-size:10px;color:var(--g3);margin-top:16px;padding:10px 14px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);line-height:1.6}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;right:32px;background:#fff;color:#000;padding:14px 22px;font-size:11px;letter-spacing:.1em;z-index:9000;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:300px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* EMPTY */
+.empty{padding:80px 32px;text-align:center}
+.empty-title{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.05em;text-transform:uppercase;color:var(--g3);margin-bottom:12px}
+.empty-sub{font-size:12px;color:var(--g3)}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-ring"></div>
+<div class="toast" id="toast"></div>
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <a href="kyro-landing.html" class="sb-logo">Kyro</a>
+  <div class="sb-search">
+    <div class="sb-si"><span>&#8981;</span><input type="text" id="sbSearch" placeholder="Search assets, stores..." oninput="handleSearch(this.value)"></div>
+  </div>
+  <a href="#" class="market-btn act" id="marketBtn" onclick="setView('marketplace',this);return false">
+    <span class="ic">&#9675;</span> Market
+  </a>
+  <div class="sb-sec">
+    <div class="sb-sec-lbl">Account</div>
+    <ul class="sb-nav">
+      <li><a href="#" onclick="setView('library',this);return false"><span class="ic">&#9672;</span> My Library</a></li>
+      <li><a href="#" onclick="setView('dashboard',this);return false"><span class="ic">&#8862;</span> Dashboard</a></li>
+      <li><a href="#" onclick="setView('mystore',this);return false"><span class="ic">&#9649;</span> My Store</a></li>
+      <li><a href="#" onclick="setView('upload',this);return false"><span class="ic">+</span> Upload Asset</a></li>
+    </ul>
+  </div>
+  <div class="sb-foot">
+    <div class="u-card" onclick="setView('mystore',null)">
+      <div class="u-av">AK</div>
+      <div><div class="u-nm">@ada_k</div><div class="u-pl">Creator</div></div>
+      <span style="margin-left:auto;color:var(--g3);font-size:11px">&#8943;</span>
+    </div>
+    <button class="tb-icon-btn" style="width:100%;margin-top:8px;display:flex;align-items:center;gap:8px;justify-content:center;padding:10px;height:auto" onclick="openChat();return false">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span style="font-size:9px;letter-spacing:.14em;text-transform:uppercase">Messages</span>
+      <span id="chatBadge" style="margin-left:auto;font-size:8px;background:#fff;color:#000;padding:2px 6px;letter-spacing:.08em">2</span>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tbTitle">Marketplace</div>
+    <div class="tb-right">
+      <button class="tb-icon-btn" onclick="openChat()" title="Messages">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <div class="notif-dot" id="chatDot"></div>
+      </button>
+      <a href="#" class="tb-btn tb-g" onclick="setView('library',null);return false">&#8862; Library</a>
+      <a href="#" class="tb-btn tb-s" onclick="setView('upload',null);return false">+ Upload Asset</a>
+    </div>
+  </div>
+  <div id="mainView"></div>
+</main>
+
+<!-- CHAT PANEL -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-title" id="chatTitle">Messages</div>
+    <button class="chat-close" onclick="closeChat()">&#x2715;</button>
+  </div>
+  <div class="chat-tabs">
+    <button class="chat-tab on" id="chatTabInbox" onclick="switchChatTab('inbox')">Inbox</button>
+    <button class="chat-tab" id="chatTabSupport" onclick="switchChatTab('support')">Support</button>
+  </div>
+  <div id="chatInboxPanel" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <div class="convo-list-wrap" id="convoListWrap">
+      <div class="convo-list" id="convoList"></div>
+    </div>
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-wh">
+        <button class="chat-back" onclick="backToConvoList()">&#8592;</button>
+        <div class="u-av" id="chatWinAv" style="width:28px;height:28px;font-size:10px">NK</div>
+        <div style="margin-left:4px">
+          <div class="chat-wh-name" id="chatWinName">@nxtstudio</div>
+          <div class="chat-wh-sub">Seller</div>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-inp" id="chatInp" placeholder="Message seller..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+        <button class="chat-send" onclick="sendMsg()">Send</button>
+      </div>
+    </div>
+  </div>
+  <div id="chatSupportPanel" style="flex:1;display:flex;flex-direction:column;overflow:hidden;display:none">
+    <div class="support-info">
+      <p><strong>Kyro Support</strong> — We reply within <strong>7 days</strong>. Ban appeals reviewed within <strong>30 days</strong>.</p>
+    </div>
+    <div class="chat-msgs" id="supportMsgs" style="flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px"></div>
+    <div class="chat-input-row">
+      <textarea class="chat-inp" id="supportInp" placeholder="Contact Kyro support..." rows="1" onkeydown="handleSupportKey(event)"></textarea>
+      <button class="chat-send" onclick="sendSupportMsg()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-card">
+    <div class="ob-progress"><div class="ob-progress-fill" id="obProgress" style="width:25%"></div></div>
+    <div class="ob-body">
+      <div class="ob-step active" id="ob1">
+        <div class="ob-icon">&#9675;</div>
+        <div class="ob-title">Welcome to<br>Kyro.</div>
+        <div class="ob-sub">The marketplace where developers sell starter kits, templates, APIs, and tools. Upload once. Earn forever.</div>
+        <div class="ob-feature-list">
+          <div class="ob-feature"><span class="ob-feature-ic">&#9633;</span> Sell your dev assets globally — templates, APIs, UI kits, scripts</div>
+          <div class="ob-feature"><span class="ob-feature-ic">&#9633;</span> Build a verified store with your own branding</div>
+          <div class="ob-feature"><span class="ob-feature-ic">&#9633;</span> Kyro Trust Score builds buyer confidence in your products</div>
+        </div>
+        <div class="ob-actions">
+          <button class="ob-skip" onclick="skipOnboarding()">Skip Tour</button>
+          <div class="ob-dots"><div class="ob-dot on"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+          <button class="btn-primary" onclick="obNext(2)">Get Started</button>
+        </div>
+      </div>
+      <div class="ob-step" id="ob2">
+        <div class="ob-icon">&#9649;</div>
+        <div class="ob-title">Your<br>Store.</div>
+        <div class="ob-sub">Customize your storefront with a banner, description, and social links. Buyers discover your store alongside your products.</div>
+        <div class="ob-feature-list">
+          <div class="ob-feature"><span class="ob-feature-ic">&#9633;</span> Custom banner with colors and branding</div>
+          <div class="ob-feature"><span class="ob-feature-ic">&#9633;</span> Editable store description and tags</div>
+          <div class="ob-feature"><span class="ob-feature-ic">&#9633;</span> Buyers can message you directly from your store page</div>
+        </div>
+        <div class="ob-actions">
+          <button class="ob-skip" onclick="skipOnboarding()">Skip Tour</button>
+          <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot on"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+          <button class="btn-primary" onclick="obNext(3)">Next</button>
+        </div>
+      </div>
+      <div class="ob-step" id="ob3">
+        <div class="ob-icon">&#9670;</div>
+        <div class="ob-title">Connect<br>GitHub.</div>
+        <div class="ob-sub">Link your GitHub to verify your identity as an active developer. This boosts your Kyro Trust Score significantly and signals legitimacy to buyers.</div>
+        <button class="github-connect-btn" onclick="connectGitHub()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Connect GitHub Account
+        </button>
+        <div class="ob-actions">
+          <button class="ob-skip" onclick="skipOnboarding()">Skip Tour</button>
+          <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot on"></div><div class="ob-dot"></div></div>
+          <button class="btn-ghost" onclick="obNext(4)">Skip for now</button>
+        </div>
+      </div>
+      <div class="ob-step" id="ob4">
+        <div class="ob-icon">&#9670;</div>
+        <div class="ob-title">Your Stripe<br>Link.</div>
+        <div class="ob-sub">Paste your Stripe payment link below. When buyers click "Buy Now" on your products, they'll be sent directly to your Stripe — you keep 100% of every sale.</div>
+        <div style="margin-bottom:16px">
+          <label class="e-lbl" style="font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;display:block;margin-bottom:8px">Your Stripe Payment Link</label>
+          <input type="url" id="obStripeLink" class="e-inp" placeholder="https://buy.stripe.com/your-link" style="width:100%;padding:11px 13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;transition:border-color .2s" oninput="state.stripeLink=this.value">
+        </div>
+        <div style="font-size:10px;color:var(--g3);line-height:1.6;padding:10px 12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)">Kyro never touches your money. You set the price in Stripe, buyers pay you directly. You can update this link anytime from Store Settings.</div>
+        <div class="ob-actions" style="margin-top:24px">
+          <button class="ob-skip" onclick="finishOnboarding()">Do This Later</button>
+          <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot on"></div></div>
+          <button class="btn-primary" onclick="finishOnboarding()">Enter Kyro →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ CURSOR ═══ */
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function ar(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ar);})();
+function hookCursor(){document.querySelectorAll('a,button,input,select,textarea,.u-card,.feat-banner,.pc,.convo-item').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));});}
+
+/* ═══ DATA ═══ */
+const ALL_PRODUCTS=[
+  {id:1,name:'Next.js SaaS Boilerplate Pro',cat:'Starter Kit',by:'@karimdev',storeId:1,price:89,sales:412,badge:'Trending',new:false,trust:85},
+  {id:2,name:'Obsidian UI — Dark Design System',cat:'Component Library',by:'@nxtstudio',storeId:2,price:79,sales:298,badge:'Top Rated',new:false,trust:91},
+  {id:3,name:'Auth + Stripe Starter API',cat:'API Template',by:'@devforge',storeId:3,price:29,sales:541,badge:'Best Seller',new:false,trust:78},
+  {id:4,name:'React Admin Dashboard Kit',cat:'Template',by:'@uicraft',storeId:4,price:59,sales:189,badge:'New',new:true,trust:62},
+  {id:5,name:'Svelte 5 Full-Stack Starter',cat:'Starter Kit',by:'@sveltepro',storeId:5,price:39,sales:74,badge:'New',new:true,trust:55},
+  {id:6,name:'CLI Scaffold Tool v2',cat:'CLI Tool',by:'@termcraft',storeId:6,price:19,sales:37,badge:'New',new:true,trust:48},
+  {id:7,name:'Tailwind Component Pack X',cat:'Component Library',by:'@windlab',storeId:7,price:45,sales:118,badge:'New',new:true,trust:70},
+  {id:8,name:'OpenAI Webhook Automator',cat:'Automation',by:'@aidevs',storeId:8,price:34,sales:91,badge:'Hot',new:false,trust:83},
+  {id:9,name:'Express REST API Boilerplate',cat:'API Template',by:'@nodemaster',storeId:9,price:24,sales:1200,badge:'Best Seller',new:false,trust:94},
+  {id:10,name:'SaaS Landing Page Kit',cat:'Template',by:'@pagecraft',storeId:10,price:35,sales:987,badge:'Top Rated',new:false,trust:88},
+  {id:11,name:'Full Auth System — JWT+OAuth',cat:'Starter Kit',by:'@authlab',storeId:11,price:44,sales:823,badge:'Trending',new:false,trust:90},
+  {id:12,name:'Supabase + Next.js Starter',cat:'Starter Kit',by:'@supra',storeId:12,price:55,sales:764,badge:'Trending',new:false,trust:76},
+];
+const STORES=[
+  {id:1,handle:'@karimdev',name:'KarimDev',desc:'Full-stack SaaS kits built in production. Every template ships with auth, billing, and deployment config.',color:'#1a1a2e',products:[1],sales:412,trust:85,github:true,plan:'Pro'},
+  {id:2,handle:'@nxtstudio',name:'NxtStudio',desc:'Design systems and UI components for modern apps. Dark-first, accessible, and beautifully documented.',color:'#0a0a0a',products:[2],sales:298,trust:91,github:true,plan:'Max'},
+  {id:3,handle:'@devforge',name:'DevForge',desc:'Battle-tested API templates. Drop into any project and ship faster.',color:'#0d1117',products:[3],sales:541,trust:78,github:true,plan:'Pro'},
+];
+const CATS=[
+  {icon:'&#9889;',name:'Starter Kits',cat:'Starter Kit',count:142},
+  {icon:'&#9647;',name:'UI Components',cat:'Component Library',count:318},
+  {icon:'&#9729;',name:'APIs',cat:'API Template',count:89},
+  {icon:'&#9881;',name:'Automation',cat:'Automation',count:74},
+  {icon:'&#8862;',name:'Templates',cat:'Template',count:203},
+  {icon:'&#9673;',name:'CLI Tools',cat:'CLI Tool',count:57},
+];
+let state={view:'marketplace',sort:'trending',search:'',library:[3,9],activeFilter:'all',stripeLink:'',githubConnected:false,uploadStep:1,currentStore:null,selectedCat:'',uploadFiles:{thumb:[],thumbData:null,screenshots:[],screenshotData:[],zip:[],zipData:null},bannerColor:'#1a1a2e',bannerImageData:null,storeName:'Ada Keller',storeDesc:'Building developer tools and SaaS templates. Pro plan creator on Kyro.',storeTagline:'Templates that ship.'};
+const BANNER_COLORS=['#1a1a2e','#0d1117','#0f0f0f','#1a0a0a','#0a1a0a','#0a0a1a','#1a1a0a','#14111f'];
+
+/* ═══ TRUST HELPERS ═══ */
+function trustColor(score){return score>=80?'trust-green':score>=50?'trust-yellow':'trust-red';}
+function trustLabel(score){return score>=80?'Verified':'Trusted'?score>=50:'Low Trust';}
+function trustBadgeHTML(score){const cls=trustColor(score);return`<span class="trust-badge ${cls}">Trust ${score}/100</span>`;}
+
+/* ═══ CARD HTML ═══ */
+function cardHTML(p){
+  const owned=state.library.includes(p.id);
+  const tClass=trustColor(p.trust);
+  return`<a href="#" class="pc" onclick="openProduct(${p.id},event);return false">
+    <div class="pc-th"><div class="pc-tg"></div><div class="pc-tl">${p.cat.split(' ')[0]}</div><div class="pc-bdg">${p.badge}</div></div>
+    <div class="pc-body">
+      <div class="pc-cat">${p.cat}</div>
+      <div class="pc-nm">${p.name}</div>
+      <div class="pc-by">${p.by}</div>
+      <div class="pc-trust">${trustBadgeHTML(p.trust)}</div>
+      <div class="pc-foot">
+        <div class="pc-price">${p.price===0?'Free':'$'+p.price}</div>
+        <div class="pc-sales">&#8595; ${p.sales.toLocaleString()} sales</div>
+      </div>
+    </div>
+    <div class="pc-r">${owned?'In Library — Buy Again':'Buy via Stripe →'}</div>
+  </a>`;}
+
+/* ═══ VIEWS ═══ */
+function renderMarketplace(){
+  let trending=ALL_PRODUCTS.filter(p=>!p.new).sort((a,b)=>b.sales-a.sales);
+  let newRel=ALL_PRODUCTS.filter(p=>p.new);
+  let topSell=[...ALL_PRODUCTS].sort((a,b)=>b.sales-a.sales).slice(0,4);
+  let filtered=getFiltered();
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs">
+      <div class="hs-bg">MARKET</div>
+      <div class="hs-tag">All Developer Assets</div>
+      <h1 class="hs-title">Find Your<br><span class="out">Next Build.</span></h1>
+      <p class="hs-meta">${ALL_PRODUCTS.length}+ starter kits, templates, APIs, and tools — built by developers, for developers.</p>
+    </div>
+    <div class="filter-bar">
+      <button class="f-tab ${state.activeFilter==='all'?'on':''}" onclick="setFilter('all',this)">All</button>
+      ${CATS.map(c=>`<button class="f-tab ${state.activeFilter===c.cat?'on':''}" onclick="setFilter('${c.cat}',this)">${c.name}</button>`).join('')}
+      <div class="sort-wrap"><span class="sort-lbl">Sort</span><select class="sort-sel" onchange="setSort(this.value)"><option value="trending">Trending</option><option value="newest">Newest</option><option value="price-low">Price: Low</option><option value="price-high">Price: High</option><option value="top-selling">Top Selling</option></select></div>
+    </div>
+    <div class="prod-wrap">
+      <div class="feat-banner" onclick="buyProduct(1,event)">
+        <div class="fb-bg">FEAT</div>
+        <div>
+          <div class="fb-badge">Featured Pick</div>
+          <div class="fb-title">Next.js SaaS Boilerplate — Full Stack</div>
+          <div class="fb-desc">Auth, Stripe, database, API routes, dashboard, and dark UI. Launch a SaaS in days.</div>
+          <div style="margin-top:14px">${trustBadgeHTML(85)}</div>
+        </div>
+        <div class="fb-right"><div class="fb-price">$89</div><a href="#" class="fb-buy" onclick="buyProduct(1,event);return false">Buy via Stripe →</a></div>
+      </div>
+      ${state.activeFilter==='all'?`
+        <div class="sec-row"><div class="row-hdr"><div><div class="row-tag">Hot Right Now</div><div class="row-ttl">Trending</div></div><a href="#" class="row-lnk" onclick="setFilter('all',null)">View All</a></div><div class="pgrid">${trending.slice(0,4).map(cardHTML).join('')}</div></div>
+        <div class="sec-row"><div class="row-hdr"><div><div class="row-tag">Just Dropped</div><div class="row-ttl">New Releases</div></div></div><div class="pgrid">${newRel.map(cardHTML).join('')}</div></div>
+        <div class="sec-row"><div class="row-hdr"><div><div class="row-tag">All Time</div><div class="row-ttl">Top Selling</div></div></div><div class="pgrid">${topSell.map(cardHTML).join('')}</div></div>
+      `:`
+        <div class="sec-row">
+          <div class="row-hdr"><div><div class="row-tag">Filtered: ${state.activeFilter}</div><div class="row-ttl">${state.activeFilter}</div></div><span style="font-size:11px;color:var(--g3)">${filtered.length} results</span></div>
+          ${filtered.length?`<div class="pgrid">${filtered.map(cardHTML).join('')}</div>`:`<div class="empty"><div class="empty-title">No Results</div><div class="empty-sub">Try a different category or clear the filter.</div></div>`}
+        </div>
+      `}
+    </div>`;
+  hookCursor();
+}
+
+function renderSearch(q){
+  const results=ALL_PRODUCTS.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.cat.toLowerCase().includes(q.toLowerCase())||p.by.toLowerCase().includes(q.toLowerCase()));
+  const storeResults=STORES.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.handle.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs"><div class="hs-tag">Search Results</div><h1 class="hs-title">Results for<br><span class="out">"${q}"</span></h1><p class="hs-meta">${results.length} asset${results.length!==1?'s':''} + ${storeResults.length} store${storeResults.length!==1?'s':''} found</p></div>
+    <div class="prod-wrap">
+      ${storeResults.length?`<div class="sec-row"><div class="row-hdr"><div><div class="row-tag">Stores</div><div class="row-ttl">Creator Stores</div></div></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:rgba(255,255,255,.055)">${storeResults.map(storeCardHTML).join('')}</div></div>`:''}
+      ${results.length?`<div class="sec-row"><div class="row-hdr"><div><div class="row-tag">Products</div><div class="row-ttl">Assets</div></div></div><div class="pgrid">${results.map(cardHTML).join('')}</div></div>`:''}
+      ${!results.length&&!storeResults.length?`<div class="empty"><div class="empty-title">No Results</div><div class="empty-sub">Try a broader search term or browse categories.</div></div>`:''}
+    </div>`;
+  hookCursor();
+}
+
+function storeCardHTML(s){
+  const tClass=trustColor(s.trust);
+  return`<a href="#" class="pc" onclick="openStore(${s.id},event);return false" style="display:block;text-decoration:none;color:#fff;background:#000;transition:background .25s;cursor:none" onmouseover="this.style.background='var(--g5)'" onmouseout="this.style.background='#000'">
+    <div style="height:70px;background:${s.color};position:relative"><div style="position:absolute;bottom:10px;left:14px;font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.3)">Creator</div></div>
+    <div style="padding:16px 18px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:3px">${s.name}</div>
+      <div style="font-size:10px;color:var(--g3);margin-bottom:10px">${s.handle}</div>
+      <div style="margin-bottom:10px">${trustBadgeHTML(s.trust)}</div>
+      <div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.05);padding-top:10px;margin-top:6px">
+        <div style="font-size:9px;color:var(--g3)">${s.products.length} product${s.products.length!==1?'s':''}</div>
+        <div style="font-size:9px;color:var(--g3)">${s.sales.toLocaleString()} sales</div>
+      </div>
+    </div>
+  </a>`;}
+
+function openProduct(id,e){
+  if(e)e.preventDefault();
+  const p=ALL_PRODUCTS.find(x=>x.id===id);if(!p)return;
+  const owned=state.library.includes(id);
+  const tClass=trustColor(p.trust);
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs" style="padding-bottom:0">
+      <div class="hs-tag"><a href="#" onclick="setView('marketplace',null);return false" style="color:var(--g3);text-decoration:none;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--g3)'">Market</a> / ${p.cat} / ${p.name}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:0;min-height:70vh">
+      <div style="padding:40px;border-right:1px solid rgba(255,255,255,.07)">
+        <div style="font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;margin-bottom:10px">${p.cat}</div>
+        <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,3.5vw,52px);letter-spacing:.02em;text-transform:uppercase;line-height:.92;margin-bottom:16px">${p.name}</h1>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+          <a href="#" onclick="openStore(${p.storeId},event);return false" style="font-size:11px;color:var(--g2);text-decoration:none;transition:color .2s;cursor:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--g2)'">${p.by}</a>
+          ${trustBadgeHTML(p.trust)}
+        </div>
+        <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);height:260px;display:flex;align-items:center;justify-content:center;margin-bottom:28px;position:relative;overflow:hidden">
+          <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:28px 28px"></div>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:.05em;color:rgba(255,255,255,.05);text-transform:uppercase">${p.cat.split(' ')[0]}</span>
+        </div>
+        <div style="font-size:12px;color:var(--g2);line-height:1.8;margin-bottom:20px">A production-ready ${p.cat.toLowerCase()} for modern development workflows. Ships with full documentation, TypeScript support, and deployment guides for Vercel, Railway, and Render.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${['TypeScript','Next.js','Tailwind','Docker','CI/CD'].map(t=>`<span style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:4px 9px;border:1px solid rgba(255,255,255,.1);color:var(--g3)">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div style="padding:32px;background:rgba(255,255,255,.015)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.03em;margin-bottom:4px">$${p.price}</div>
+        <div style="font-size:10px;color:var(--g3);margin-bottom:24px">one-time payment · direct to seller</div>
+        <button onclick="buyProduct(${id},event)" style="width:100%;padding:14px;background:#fff;color:#000;border:1px solid #fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .22s;margin-bottom:8px" onmouseover="this.style.background='transparent';this.style.color='#fff';" onmouseout="this.style.background='#fff';this.style.color='#000';">Buy Now → Stripe</button>
+        <button onclick="openChatWith('${p.by.slice(1)}')" style="width:100%;padding:12px;background:transparent;color:var(--g2);border:1px solid rgba(255,255,255,.1);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .22s" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='var(--g2)'">Message Seller</button>
+        <div style="margin-top:24px;padding-top:24px;border-top:1px solid rgba(255,255,255,.07)">
+          <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--g3);margin-bottom:14px">Store Trust Score</div>
+          ${renderTrustCard(p.trust)}
+        </div>
+        <div style="margin-top:20px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--g3);margin-bottom:6px"><span>Sales</span><span style="color:var(--g2)">${p.sales.toLocaleString()}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--g3);margin-bottom:6px"><span>Category</span><span style="color:var(--g2)">${p.cat}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--g3)"><span>Last Updated</span><span style="color:var(--g2)">2 weeks ago</span></div>
+        </div>
+      </div>
+    </div>`;
+  hookCursor();
+}
+
+function renderTrustCard(score){
+  const cls=trustColor(score);
+  const colorMap={trust_green:'var(--trust-green)',trust_yellow:'var(--trust-yellow)',trust_red:'var(--trust-red)'};
+  const c=cls==='trust-green'?'var(--trust-green)':cls==='trust-yellow'?'var(--trust-yellow)':'var(--trust-red)';
+  return`<div style="border:1px solid;border-color:${c}22;padding:12px;background:${c}08">
+    <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:8px"><span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${c}">${score}</span><span style="font-size:11px;color:var(--g3)">/100</span><span style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:${c};margin-left:4px">${score>=80?'Verified':score>=50?'Trusted':'Low Trust'}</span></div>
+    <div style="height:2px;background:rgba(255,255,255,.07);margin-bottom:4px"><div style="height:100%;background:${c};width:${score}%"></div></div>
+    <div style="font-size:9px;color:var(--g3);margin-top:6px">Kyro Trust Score — calculated from GitHub activity, sales, and product quality</div>
+  </div>`;}
+
+function openStore(id,e){
+  if(e)e.preventDefault();
+  const s=STORES.find(x=>x.id===id)||(state.currentStore?{...state.currentStore}:STORES[0]);
+  state.currentStore=s;
+  const prods=ALL_PRODUCTS.filter(p=>p.storeId===id||s.products.includes(p.id));
+  const tClass=trustColor(s.trust);
+  document.getElementById('tbTitle').textContent=s.name;
+  document.getElementById('mainView').innerHTML=`
+    <div class="store-banner">
+      <div class="store-banner-bg" style="background:${s.color||state.bannerColor}">
+        <div style="position:absolute;right:-10px;bottom:-20px;font-family:'Bebas Neue',sans-serif;font-size:180px;color:rgba(255,255,255,.03);letter-spacing:-.04em;text-transform:uppercase;pointer-events:none;line-height:1">${s.name.substring(0,2).toUpperCase()}</div>
+      </div>
+      <div class="store-info">
+        <div class="store-av">${s.name.substring(0,2).toUpperCase()}</div>
+        <div class="store-meta">
+          <div class="store-name">${s.name}</div>
+          <div class="store-handle">${s.handle}</div>
+          <div class="store-stats">
+            <div class="st-stat"><div class="st-stat-n">${s.products.length}</div><div class="st-stat-l">Products</div></div>
+            <div class="st-stat"><div class="st-stat-n">${s.sales.toLocaleString()}</div><div class="st-stat-l">Sales</div></div>
+          </div>
+        </div>
+        <div class="store-trust">
+          ${renderTrustScoreLg(s.trust)}
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button onclick="openChatWith('${s.handle.slice(1)}')" style="padding:9px 14px;border:1px solid rgba(255,255,255,.2);background:transparent;color:var(--g2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.borderColor='#fff';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='var(--g2)'">Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:24px 32px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.015)">
+      <p style="font-size:12px;color:var(--g2);line-height:1.7;max-width:600px">${s.desc}</p>
+      ${s.github?`<div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:10px;color:var(--trust-green)"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> GitHub Verified</div>`:''}
+    </div>
+    <div class="prod-wrap">
+      <div class="row-hdr"><div><div class="row-tag">Store Products</div><div class="row-ttl">All Listings</div></div></div>
+      ${prods.length?`<div class="pgrid">${prods.map(cardHTML).join('')}</div>`:`<div class="empty"><div class="empty-title">No Products</div><div class="empty-sub">This store hasn't published any products yet.</div></div>`}
+    </div>`;
+  hookCursor();
+}
+
+function renderTrustScoreLg(score){
+  const c=score>=80?'var(--trust-green)':score>=50?'var(--trust-yellow)':'var(--trust-red)';
+  const lbl=score>=80?'Verified':score>=50?'Trusted':'Low Trust';
+  return`<div style="border:1px solid;border-color:${c}44;padding:14px 18px;text-align:center;min-width:100px;background:${c}0a">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:${c};display:block;line-height:1">${score}</span>
+    <span style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:${c};opacity:.8;display:block;margin-top:2px">${lbl}</span>
+    <span style="font-size:7px;letter-spacing:.12em;color:var(--g3);text-transform:uppercase;display:block;margin-top:3px">Trust Score</span>
+  </div>`;}
+
+function renderMyStore(){
+  const trust=calcTrustScore();
+  document.getElementById('tbTitle').textContent='My Store';
+  document.getElementById('mainView').innerHTML=`
+    ${!state.stripeLink?`<div class="stripe-reminder"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="1.5" style="flex-shrink:0"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="1"/></svg><div class="sr-text"><strong>Add your Stripe link</strong> so buyers can purchase your products directly.</div><button class="sr-btn" onclick="showStripeModal()">Set Link</button></div>`:''}
+    <div class="edit-banner-zone" onclick="openBannerEditor()">
+      <div style="height:220px;background:${state.bannerColor};${state.bannerImageData?`background-image:url(${state.bannerImageData});background-size:cover;background-position:center;`:''}position:relative;overflow:hidden">
+        ${!state.bannerImageData?`<div style="position:absolute;right:-20px;top:-20px;font-family:'Bebas Neue',sans-serif;font-size:200px;color:rgba(255,255,255,.03);pointer-events:none;line-height:1">AK</div>`:''}
+        <div class="banner-overlay">Click to edit banner</div>
+      </div>
+    </div>
+    <div style="padding:28px 32px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-end;gap:20px">
+      <div class="store-av" style="width:64px;height:64px;font-size:22px">AK</div>
+      <div style="flex:1">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.03em;text-transform:uppercase;line-height:1;margin-bottom:4px">${state.storeName}</div>
+        <div style="font-size:11px;color:var(--g3);letter-spacing:.1em">@ada_k</div>
+      </div>
+      ${renderTrustScoreLg(trust)}
+      <button onclick="openStoreEditor()" style="padding:10px 18px;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--g2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.borderColor='#fff';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='var(--g2)'">Edit Store</button>
+    </div>
+    <div style="padding:28px 32px;border-bottom:1px solid rgba(255,255,255,.07);display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div style="font-size:9px;letter-spacing:.2em;color:var(--g3);text-transform:uppercase;margin-bottom:8px">Store Description</div>
+        <p style="font-size:12px;color:var(--g2);line-height:1.7">${state.storeDesc}</p>
+      </div>
+      <div>
+        ${renderTrustBreakdown(trust)}
+      </div>
+    </div>
+    <div>
+      ${renderGitHubSection()}
+    </div>
+    <div class="prod-wrap">
+      <div class="row-hdr"><div><div class="row-tag">Your Products</div><div class="row-ttl">My Listings</div></div><a href="#" class="row-lnk" onclick="setView('upload',null);return false">+ New Asset</a></div>
+      <div class="pgrid">${ALL_PRODUCTS.slice(0,3).map(cardHTML).join('')}</div>
+    </div>`;
+  hookCursor();
+}
+
+function calcTrustScore(){
+  let score=0;
+  if(state.githubConnected){score+=40;}else{score+=0;}
+  score+=20; // product updates sim
+  score+=15; // sales sim
+  score+=10; // completeness sim
+  if(!state.githubConnected)score=Math.min(score,60);
+  return score;
+}
+
+function renderTrustBreakdown(score){
+  const c=score>=80?'var(--trust-green)':score>=50?'var(--trust-yellow)':'var(--trust-red)';
+  const metrics=[
+    {label:'GitHub Verification',weight:'40%',val:state.githubConnected?40:0,max:40},
+    {label:'Product Updates',weight:'20%',val:20,max:20},
+    {label:'Sales Volume',weight:'20%',val:15,max:20},
+    {label:'Product Completeness',weight:'10%',val:10,max:10},
+    {label:'Community Feedback',weight:'10%',val:0,max:10},
+  ];
+  return`<div>
+    <div style="font-size:9px;letter-spacing:.2em;color:var(--g3);text-transform:uppercase;margin-bottom:12px">Trust Score Breakdown</div>
+    ${metrics.map(m=>`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--g3);margin-bottom:4px"><span>${m.label}</span><span style="color:var(--g2)">${m.val}/${m.max}</span></div>
+      <div style="height:2px;background:rgba(255,255,255,.07)"><div style="height:100%;background:${c};width:${(m.val/m.max)*100}%;transition:width 1s"></div></div>
+    </div>`).join('')}
+    ${!state.githubConnected?`<div style="font-size:10px;color:var(--trust-yellow);margin-top:8px;padding:8px 10px;border:1px solid rgba(234,179,8,.2);background:rgba(234,179,8,.05)">Connect GitHub to unlock +40 trust points and reach Verified status.</div>`:''}
+  </div>`;}
+
+function renderGitHubSection(){
+  return`<div style="padding:28px 32px;border-bottom:1px solid rgba(255,255,255,.07)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="opacity:.6"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:uppercase">GitHub Integration</div>
+      <div style="margin-left:auto"><span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;padding:4px 10px;border:1px solid;${state.githubConnected?'color:var(--trust-green);border-color:rgba(34,197,94,.3)':'color:var(--g3);border-color:rgba(255,255,255,.1)'}">${state.githubConnected?'Connected':'Disconnected'}</span></div>
+    </div>
+    ${state.githubConnected?`
+      <div style="margin-bottom:10px;font-size:10px;color:var(--g2)">Connected as <strong style="color:#fff">@${(state.githubUser&&state.githubUser.login)||'github_user'}</strong> &mdash; ${(state.githubUser&&state.githubUser.public_repos)||0} public repos</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${((state.githubRepos&&state.githubRepos.length)?state.githubRepos:[{name:'nextjs-saas-boilerplate',upd:'2 days ago',url:'#'},{name:'auth-stripe-api',upd:'1 week ago',url:'#'}]).map(r=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)">
+          <span style="font-size:10px;letter-spacing:.06em;flex:1">${r.name}</span>
+          <span style="font-size:9px;color:var(--g3)">Updated ${r.upd}</span>
+          <a href="${r.url||'#'}" target="_blank" rel="noopener" style="font-size:9px;color:var(--g3);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;cursor:none" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--g3)'">View</a>
+        </div>`).join('')}
+      </div>
+      <button onclick="disconnectGitHub()" style="margin-top:12px;padding:7px 14px;border:1px solid rgba(239,68,68,.2);background:transparent;color:rgba(239,68,68,.7);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(239,68,68,.5)';this.style.color='#ef4444'" onmouseout="this.style.borderColor='rgba(239,68,68,.2)';this.style.color='rgba(239,68,68,.7)'">Disconnect GitHub</button>
+    `:`<button class="github-connect-btn" onclick="connectGitHub()" style="max-width:320px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      Connect GitHub Account
+    </button>`}
+  </div>`;}
+
+function openStoreEditor(){
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs"><div class="hs-bg">EDIT</div><div class="hs-tag">Storefront</div><h1 class="hs-title">Edit<br><span class="out">Your Store.</span></h1></div>
+    <div style="max-width:760px;padding:32px">
+      <input type="file" id="bannerFileInput" accept="image/*" style="display:none" onchange="handleBannerUpload(event)">
+      <div class="edit-section">
+        <div class="edit-section-title">Banner</div>
+        <div style="position:relative;overflow:hidden;cursor:none;margin-bottom:12px" onclick="document.getElementById('bannerFileInput').click()">
+          <div id="bannerPreviewDiv" style="width:100%;height:140px;background:${state.bannerColor};${state.bannerImageData?`background-image:url(${state.bannerImageData});background-size:cover;background-position:center;`:''}display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden;transition:all .3s">
+            ${!state.bannerImageData?`<span style="font-family:'Bebas Neue',sans-serif;font-size:60px;letter-spacing:.03em;opacity:.08">AK</span>`:''}
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .3s;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#fff" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">Upload Image</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <button onclick="document.getElementById('bannerFileInput').click()" style="padding:8px 16px;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--g2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.borderColor='#fff';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='var(--g2)'">Upload Banner Image</button>
+          ${state.bannerImageData?`<button onclick="state.bannerImageData=null;openStoreEditor()" style="padding:8px 14px;border:1px solid rgba(239,68,68,.2);background:transparent;color:rgba(239,68,68,.7);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(239,68,68,.5)';this.style.color='#ef4444'" onmouseout="this.style.borderColor='rgba(239,68,68,.2)';this.style.color='rgba(239,68,68,.7)'">Remove Image</button>`:''}
+        </div>
+        <div class="e-lbl">Or choose a color</div>
+        <div class="color-swatches">${BANNER_COLORS.map(c=>`<div class="color-sw ${state.bannerColor===c&&!state.bannerImageData?'sel':''}" style="background:${c}" onclick="setBannerColor('${c}',this)"></div>`).join('')}</div>
+      </div>
+      <div class="edit-section">
+        <div class="edit-section-title">Store Info</div>
+        <div class="edit-grid">
+          <div class="edit-field"><label class="e-lbl">Store Name</label><input type="text" class="e-inp" value="${state.storeName}" oninput="state.storeName=this.value"></div>
+          <div class="edit-field"><label class="e-lbl">Tagline</label><input type="text" class="e-inp" value="${state.storeTagline}" oninput="state.storeTagline=this.value" placeholder="Short catchy line"></div>
+        </div>
+        <div class="edit-field" style="margin-top:14px"><label class="e-lbl">Description</label><textarea class="e-inp e-textarea" oninput="state.storeDesc=this.value">${state.storeDesc}</textarea></div>
+      </div>
+      <div class="edit-section">
+        <div class="edit-section-title">Payment Link</div>
+        <div class="edit-field"><label class="e-lbl">Your Stripe Payment Link</label><input type="url" class="e-inp" placeholder="https://buy.stripe.com/your-link" value="${state.stripeLink||''}" oninput="state.stripeLink=this.value;localStorage.setItem('kyro_stripe_link',this.value)"></div>
+        <div style="font-size:10px;color:var(--g3);line-height:1.6;margin-top:8px">Buyers click "Buy Now" and land directly on your Stripe. Kyro never touches your revenue.</div>
+      </div>
+      <div class="edit-section">
+        <div class="edit-section-title">Social Links</div>
+        <div class="edit-grid">
+          <div class="edit-field"><label class="e-lbl">GitHub URL</label><input type="url" class="e-inp" placeholder="https://github.com/username"></div>
+          <div class="edit-field"><label class="e-lbl">Twitter / X</label><input type="text" class="e-inp" placeholder="@handle"></div>
+          <div class="edit-field"><label class="e-lbl">Website</label><input type="url" class="e-inp" placeholder="https://yoursite.com"></div>
+          <div class="edit-field"><label class="e-lbl">Discord</label><input type="text" class="e-inp" placeholder="discord.gg/server"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;padding:24px 0 0">
+        <button class="btn-primary" onclick="saveStoreEdit()">Save Changes</button>
+        <button class="btn-ghost" onclick="setView('mystore',null)">Cancel</button>
+      </div>
+    </div>`;
+  hookCursor();
+}
+
+function setBannerColor(c,el){
+  state.bannerColor=c;
+  state.bannerImageData=null;
+  document.querySelectorAll('.color-sw').forEach(sw=>sw.classList.remove('sel'));
+  el.classList.add('sel');
+  const preview=document.getElementById('bannerPreviewDiv');
+  if(preview){preview.style.background=c;preview.style.backgroundImage='';}
+}
+
+function handleBannerUpload(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    state.bannerImageData=e.target.result;
+    openStoreEditor();
+    showToast('Banner image uploaded!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function openBannerEditor(){openStoreEditor();}
+function saveStoreEdit(){setView('mystore',null);showToast('Store updated!');}
+
+function renderUpload(){
+  document.getElementById('tbTitle').textContent='Upload Asset';
+  const s=state.uploadStep;
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs"><div class="hs-bg">UP</div><div class="hs-tag">Creator</div><h1 class="hs-title">Upload<br><span class="out">Asset.</span></h1></div>
+    <div class="upload-flow">
+      <div class="flow-steps">
+        ${['Info','Media','File','Publish'].map((l,i)=>`<div class="flow-step ${s===i+1?'active':s>i+1?'done':''}"><span class="flow-step-num">${String(i+1).padStart(2,'0')}</span>${l}</div>`).join('')}
+      </div>
+      ${s===1?renderUploadStep1():s===2?renderUploadStep2():s===3?renderUploadStep3():renderUploadStep4()}
+    </div>`;
+  hookCursor();
+}
+
+function renderUploadStep1(){return`
+  <div class="upload-card"><div class="upload-card-title">Product Info</div>
+    <div class="edit-field" style="margin-bottom:16px"><label class="e-lbl">Product Title</label><input type="text" class="e-inp" placeholder="e.g. Next.js SaaS Boilerplate Pro" id="upTitle"></div>
+    <div class="edit-field" style="margin-bottom:16px"><label class="e-lbl">Description</label><textarea class="e-inp e-textarea" placeholder="Describe what your product does, what's included, and who it's for..." id="upDesc"></textarea></div>
+    <div class="edit-field" style="margin-bottom:16px">
+      <label class="e-lbl">Category</label>
+      <div class="cat-pills" id="catPills">
+        ${['Starter Kit','API Template','UI Kit','Component Library','Template','CLI Tool','Automation','Script'].map(c=>`<button class="cat-pill ${state.selectedCat===c?'sel':''}" onclick="selectCat('${c}',this)">${c}</button>`).join('')}
+      </div>
+    </div>
+    <div class="price-row">
+      <div class="edit-field"><label class="e-lbl">Price (USD)</label><div class="price-input-wrap"><input type="number" class="e-inp" placeholder="0.00" min="0" step="0.01" id="upPrice"></div></div>
+      <div style="font-size:10px;color:var(--g3);padding-bottom:12px;align-self:end">Set to 0 for free. You keep 100% — Kyro takes nothing.</div>
+    </div>
+    <div class="edit-field" style="margin-top:14px">
+      <label class="e-lbl">Stripe Payment Link (for this product)</label>
+      <input type="url" class="e-inp" placeholder="https://buy.stripe.com/your-product-link — or leave blank to use your store link" id="upStripeLink" value="${state.stripeLink||''}">
+      <div style="font-size:9px;color:var(--g3);margin-top:6px;line-height:1.5">Create a product-specific link in your Stripe dashboard. Buyers click "Buy Now" and land directly on your Stripe checkout.</div>
+    </div>
+  </div>
+  <div class="flow-actions"><div></div><button class="btn-primary" onclick="uploadNextStep(2)">Next: Media →</button></div>`;}
+
+function renderUploadStep2(){return`
+  <div class="upload-card"><div class="upload-card-title">Product Media</div>
+    <div style="margin-bottom:24px">
+      <label class="e-lbl">Product Thumbnail (required)</label>
+      <div class="upload-zone" onclick="triggerFileUpload('thumb')" style="cursor:none">
+        ${state.uploadFiles.thumbData?`<div style="text-align:center"><img src="${state.uploadFiles.thumbData}" style="max-height:120px;max-width:100%;margin-bottom:8px;border:1px solid rgba(255,255,255,.1)"><div style="font-size:10px;color:var(--trust-green)">&#9670; Uploaded</div></div>`:`<div class="uz-icon">&#9635;</div><div class="uz-title">Click to upload thumbnail</div><div class="uz-sub">PNG, JPG, WebP — 1280x720 recommended</div>`}
+        ${state.uploadFiles.thumb.length&&!state.uploadFiles.thumbData?`<div class="file-chips">${state.uploadFiles.thumb.map(f=>`<div class="file-chip"><span>${f}</span><button onclick="removeFile('thumb','${f}',event)">x</button></div>`).join('')}</div>`:''}
+      </div>
+    </div>
+    <div>
+      <label class="e-lbl">Screenshots / Demo Images (optional)</label>
+      <div class="upload-zone" onclick="triggerFileUpload('screenshots')" style="cursor:none">
+        ${state.uploadFiles.screenshotData&&state.uploadFiles.screenshotData.length?`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">${state.uploadFiles.screenshotData.map(d=>`<img src="${d}" style="height:70px;border:1px solid rgba(255,255,255,.1)">`).join('')}</div><div style="font-size:10px;color:var(--trust-green);margin-top:8px">&#9670; ${state.uploadFiles.screenshots.length} image${state.uploadFiles.screenshots.length>1?'s':''} uploaded</div>`:`<div class="uz-icon">&#9632;</div><div class="uz-title">Click to upload screenshots</div><div class="uz-sub">Up to 8 images — show your product in action</div>`}
+        ${state.uploadFiles.screenshots.length&&(!state.uploadFiles.screenshotData||!state.uploadFiles.screenshotData.length)?`<div class="file-chips">${state.uploadFiles.screenshots.map(f=>`<div class="file-chip"><span>${f}</span><button onclick="removeFile('screenshots','${f}',event)">x</button></div>`).join('')}</div>`:''}
+      </div>
+    </div>
+  </div>
+  <div class="flow-actions"><button class="btn-ghost" onclick="uploadNextStep(1)">← Back</button><button class="btn-primary" onclick="uploadNextStep(3)">Next: Files →</button></div>`;}
+
+function renderUploadStep3(){return`
+  <div class="upload-card"><div class="upload-card-title">Product File</div>
+    <div class="upload-zone" onclick="triggerFileUpload('zip')" style="cursor:none">
+      ${state.uploadFiles.zip.length?`<div class="uz-icon" style="color:var(--trust-green);opacity:1">&#9670;</div><div class="uz-title">${state.uploadFiles.zip[0]}</div><div class="uz-sub" style="color:var(--trust-green)">File ready · click to replace</div><div class="file-chips">${state.uploadFiles.zip.map(f=>`<div class="file-chip"><span>${f}</span><button onclick="removeFile('zip','${f}',event)">x</button></div>`).join('')}</div>`:`<div class="uz-icon">&#8964;</div><div class="uz-title">Click to upload product file</div><div class="uz-sub">ZIP, TAR, any archive — your product code and assets</div>`}
+    </div>
+    <div class="scan-badge">
+      <span class="sb-ico">&#9670;</span>
+      <div class="sb-text"><strong>Kyro File Scan</strong> — All uploads are automatically scanned for malicious code and vulnerabilities before going live.</div>
+    </div>
+    <div style="margin-top:20px;padding:16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)">
+      <div style="font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--g3);margin-bottom:10px">Optional: GitHub Sync</div>
+      <div style="font-size:11px;color:var(--g2);line-height:1.7;margin-bottom:12px">Link a GitHub repo to automatically sync README, changelogs, and keep your product updated. Boosts your Trust Score.</div>
+      ${state.githubConnected?`<select class="e-inp e-select" style="max-width:320px"><option value="">Select a repository...</option><option>nextjs-saas-boilerplate</option><option>auth-stripe-api</option><option>react-dashboard-kit</option></select>`:`<button onclick="connectGitHub()" style="padding:9px 16px;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--g3);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,.12)';this.style.color='var(--g3)'">Connect GitHub First</button>`}
+    </div>
+  </div>
+  <div class="flow-actions"><button class="btn-ghost" onclick="uploadNextStep(2)">← Back</button><button class="btn-primary" onclick="uploadNextStep(4)">Review & Publish →</button></div>`;}
+
+function renderUploadStep4(){return`
+  <div class="upload-card">
+    <div class="upload-card-title">Review & Publish</div>
+    <div style="padding:20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);margin-bottom:16px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px">Your Product is Ready</div>
+      <div style="font-size:11px;color:var(--g2);line-height:1.7">Once published, your product will appear on the marketplace and your store. It will be scanned and indexed within minutes.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--g2)"><span style="color:var(--trust-green)">&#9670;</span> Product info entered</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--g2)"><span style="color:${state.uploadFiles.thumb.length?'var(--trust-green)':'var(--trust-yellow)'}">&#9670;</span> Thumbnail ${state.uploadFiles.thumb.length?'uploaded':'not uploaded (recommended)'}</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--g2)"><span style="color:${state.uploadFiles.zip.length?'var(--trust-green)':'var(--trust-red)'}">&#9670;</span> Product file ${state.uploadFiles.zip.length?'uploaded':'not uploaded'}</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--g2)"><span style="color:${state.stripeLink?'var(--trust-green)':'var(--trust-yellow)'}">&#9670;</span> Stripe link ${state.stripeLink?'set':'not set — buyers will be prompted to message you'}</div>
+    </div>
+    <div style="font-size:10px;color:var(--g3);line-height:1.6;padding:12px;border:1px solid rgba(255,255,255,.07)">Your product will appear in: Trending, New Releases, and relevant category pages. Buyers click "Buy Now" and are sent directly to your Stripe link.</div>
+  </div>
+  <div class="flow-actions">
+    <button class="btn-ghost" onclick="uploadNextStep(3)">← Back</button>
+    <button class="btn-primary" onclick="publishProduct()">Publish Now</button>
+  </div>`;}
+
+function selectCat(c,el){
+  state.selectedCat=c;
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function uploadNextStep(n){state.uploadStep=n;renderUpload();}
+
+function triggerFileUpload(type){
+  const input=document.createElement('input');
+  input.type='file';
+  if(type==='thumb'||type==='screenshots')input.accept='image/*';
+  if(type==='screenshots')input.multiple=true;
+  if(type==='zip')input.accept='.zip,.tar,.gz,.rar,.7z,application/zip,application/x-zip-compressed';
+  input.style.display='none';
+  document.body.appendChild(input);
+  input.click();
+  input.onchange=e=>{
+    const files=Array.from(e.target.files);
+    if(!files.length){document.body.removeChild(input);return;}
+    if(type==='thumb'){
+      const reader=new FileReader();
+      reader.onload=ev=>{state.uploadFiles.thumbData=ev.target.result;};
+      reader.readAsDataURL(files[0]);
+      state.uploadFiles.thumb=[files[0].name];
+    } else if(type==='screenshots'){
+      state.uploadFiles.screenshots=files.map(f=>f.name);
+      state.uploadFiles.screenshotData=[];
+      files.forEach(f=>{const r=new FileReader();r.onload=ev=>{state.uploadFiles.screenshotData.push(ev.target.result);};r.readAsDataURL(f);});
+    } else if(type==='zip'){
+      state.uploadFiles.zip=[files[0].name];
+      state.uploadFiles.zipData=files[0];
+    }
+    renderUpload();
+    showToast('File'+(files.length>1?'s':'')+' uploaded: '+files.map(f=>f.name).join(', '));
+    document.body.removeChild(input);
+  };
+}
+
+function removeFile(type,name,e){
+  e.stopPropagation();
+  state.uploadFiles[type]=state.uploadFiles[type].filter(f=>f!==name);
+  if(type==='thumb')state.uploadFiles.thumbData=null;
+  if(type==='zip')state.uploadFiles.zipData=null;
+  renderUpload();
+}
+
+function publishProduct(){
+  document.getElementById('mainView').innerHTML=`
+    <div class="publish-success">
+      <div class="ps-check">&#9670;</div>
+      <div class="ps-title">Asset<br>Published.</div>
+      <div class="ps-sub">Your product is now live on the marketplace and your store. It will be scanned, indexed, and searchable within minutes.</div>
+      <div class="discovery-badges">
+        <div class="disc-badge">Trending</div>
+        <div class="disc-badge">New Releases</div>
+        <div class="disc-badge">Category Page</div>
+        <div class="disc-badge">Search Index</div>
+      </div>
+      <div class="ps-actions">
+        <button class="btn-primary" onclick="setView('mystore',null)">View My Store</button>
+        <button class="btn-ghost" onclick="setView('marketplace',null)">Browse Marketplace</button>
+      </div>
+    </div>`;
+  state.uploadStep=1;state.uploadFiles={thumb:[],screenshots:[],zip:[]};
+  hookCursor();
+}
+
+function renderLibrary(){
+  const owned=ALL_PRODUCTS.filter(p=>state.library.includes(p.id));
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs"><div class="hs-bg">LIB</div><div class="hs-tag">Your Purchases</div><h1 class="hs-title">My<br><span class="out">Library.</span></h1><p class="hs-meta">${owned.length} purchased asset${owned.length!==1?'s':''}</p></div>
+    <div class="prod-wrap">
+      ${owned.length?`<div class="pgrid">${owned.map(p=>`<div class="pc" style="cursor:none"><div class="pc-th"><div class="pc-tg"></div><div class="pc-tl">${p.cat.split(' ')[0]}</div><div class="pc-bdg">Owned</div></div><div class="pc-body"><div class="pc-cat">${p.cat}</div><div class="pc-nm">${p.name}</div><div class="pc-by">${p.by}</div><div class="pc-trust">${trustBadgeHTML(p.trust)}</div><div class="pc-foot"><div class="pc-price">$${p.price}</div><a href="#" onclick="showToast('Downloading '+decodeURIComponent('${encodeURIComponent(p.name)}')+'...');return false" style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.15);padding:4px 10px;transition:all .2s;cursor:none" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)'">Download</a></div></div></div>`).join('')}</div>`:`<div class="empty"><div class="empty-title">Library Empty</div><div class="empty-sub">Purchase assets from the marketplace to see them here.</div></div>`}
+    </div>`;
+  hookCursor();
+}
+
+function renderDashboard(){
+  document.getElementById('mainView').innerHTML=`
+    <div class="hs"><div class="hs-bg">DASH</div><div class="hs-tag">Creator Dashboard</div><h1 class="hs-title">Your<br><span class="out">Numbers.</span></h1></div>
+    <div class="prod-wrap">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.055);margin-bottom:44px">
+        <div style="background:#000;padding:36px 28px;transition:background .3s" onmouseover="this.style.background='var(--g5)'" onmouseout="this.style.background='#000'"><div style="font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;margin-bottom:5px">$4,280</div><div style="font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase">Total Revenue</div></div>
+        <div style="background:#000;padding:36px 28px;transition:background .3s" onmouseover="this.style.background='var(--g5)'" onmouseout="this.style.background='#000'"><div style="font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;margin-bottom:5px">89</div><div style="font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase">Total Sales</div></div>
+        <div style="background:#000;padding:36px 28px;transition:background .3s" onmouseover="this.style.background='var(--g5)'" onmouseout="this.style.background='#000'"><div style="font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;margin-bottom:5px">3</div><div style="font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase">Active Listings</div></div>
+        <div style="background:#000;padding:36px 28px;transition:background .3s" onmouseover="this.style.background='var(--g5)'" onmouseout="this.style.background='#000'"><div style="font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;margin-bottom:5px">${calcTrustScore()}</div><div style="font-size:10px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase">Trust Score</div></div>
+      </div>
+      <div class="row-hdr"><div><div class="row-tag">Your Products</div><div class="row-ttl">My Listings</div></div><a href="#" class="row-lnk" onclick="setView('upload',null);return false">+ New Asset</a></div>
+      <div class="pgrid">${ALL_PRODUCTS.slice(0,3).map(cardHTML).join('')}</div>
+    </div>`;
+  hookCursor();
+}
+
+/* ═══ STATE MANAGEMENT ═══ */
+function setView(v,el){
+  state.view=v;state.search='';
+  document.getElementById('sbSearch').value='';
+  document.querySelectorAll('.sb-nav a,.market-btn').forEach(a=>a.classList.remove('act'));
+  if(el)el.classList.add('act');
+  const titles={marketplace:'Marketplace',library:'My Library',dashboard:'Dashboard',mystore:'My Store',upload:'Upload Asset'};
+  document.getElementById('tbTitle').textContent=titles[v]||'Marketplace';
+  if(v==='library')renderLibrary();
+  else if(v==='dashboard')renderDashboard();
+  else if(v==='mystore')renderMyStore();
+  else if(v==='upload'){state.uploadStep=1;renderUpload();}
+  else{state.activeFilter='all';renderMarketplace();}
+}
+
+function setFilter(f){state.activeFilter=f;renderMarketplace();}
+function setSort(v){state.sort=v;renderMarketplace();}
+function getFiltered(){
+  let p=[...ALL_PRODUCTS];
+  if(state.activeFilter&&state.activeFilter!=='all')p=p.filter(x=>x.cat===state.activeFilter);
+  if(state.sort==='newest')p=p.filter(x=>x.new);
+  else if(state.sort==='price-low')p.sort((a,b)=>a.price-b.price);
+  else if(state.sort==='price-high')p.sort((a,b)=>b.price-a.price);
+  else if(state.sort==='top-selling')p.sort((a,b)=>b.sales-a.sales);
+  else p.sort((a,b)=>b.sales-a.sales);
+  return p;
+}
+
+let searchTimeout;
+function handleSearch(q){
+  state.search=q;
+  clearTimeout(searchTimeout);
+  if(!q){state.view='marketplace';renderMarketplace();return;}
+  searchTimeout=setTimeout(()=>{
+    document.getElementById('tbTitle').textContent='Search';
+    renderSearch(q);
+  },300);
+}
+
+function buyProduct(id,e){
+  if(e)e.preventDefault();
+  const p=ALL_PRODUCTS.find(x=>x.id===id);if(!p)return;
+  if(state.library.includes(id)){showToast('Already in your library!');return;}
+  // Find seller's stripe link
+  const s=STORES.find(x=>x.id===p.storeId);
+  const link=(s&&s.stripeLink)||p.stripeLink||'';
+  if(link){
+    showToast('Redirecting to seller\'s Stripe...');
+    setTimeout(()=>{window.open(link,'_blank');},500);
+  } else {
+    showToast('Seller hasn\'t set up their payment link yet. Message them directly.');
+  }
+}
+
+/* ═══ CHAT ═══ */
+const CONVOS=[
+  {id:1,handle:'nxtstudio',name:'NxtStudio',initials:'NS',msgs:[{from:'them',text:'Hey, just wanted to say the component pack works great!',time:'2h ago'},{from:'me',text:'Thanks for the feedback! Let me know if you need anything.',time:'2h ago'}]},
+  {id:2,handle:'devforge',name:'DevForge',initials:'DF',msgs:[{from:'them',text:'Is the auth template compatible with Next.js 14?',time:'1d ago'}]},
+];
+const SUPPORT_MSGS=[
+  {from:'support',text:'Welcome to Kyro Support. We reply within 7 days. Ban appeals are reviewed within 30 days. How can we help?',time:'Today'}
+];
+let activeChatConvo=null,chatActiveTab='inbox';
+
+function openChat(){
+  document.getElementById('chatPanel').classList.add('open');
+  document.getElementById('chatBadge').style.display='none';
+  document.getElementById('chatDot').style.display='none';
+  renderConvoList();
+  hookCursor();
+}
+function closeChat(){document.getElementById('chatPanel').classList.remove('open');}
+
+function switchChatTab(tab){
+  chatActiveTab=tab;
+  document.getElementById('chatTabInbox').classList.toggle('on',tab==='inbox');
+  document.getElementById('chatTabSupport').classList.toggle('on',tab==='support');
+  document.getElementById('chatInboxPanel').style.display=tab==='inbox'?'flex':'none';
+  document.getElementById('chatSupportPanel').style.display=tab==='support'?'flex':'none';
+  if(tab==='support')renderSupportMsgs();
+}
+
+function renderConvoList(){
+  const list=document.getElementById('convoList');
+  list.innerHTML=CONVOS.map(c=>`<div class="convo-item" onclick="openConvo(${c.id})">
+    <div class="convo-av">${c.initials}</div>
+    <div class="convo-meta">
+      <div class="convo-name">${c.name}</div>
+      <div class="convo-preview">${c.msgs[c.msgs.length-1].text}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div class="convo-time">${c.msgs[c.msgs.length-1].time}</div>
+    </div>
+  </div>`).join('');
+  document.getElementById('convoListWrap').classList.remove('hide');
+  document.getElementById('chatWindow').classList.remove('show');
+  hookCursor();
+}
+
+function openConvo(id){
+  const c=CONVOS.find(x=>x.id===id);if(!c)return;
+  activeChatConvo=id;
+  document.getElementById('chatWinAv').textContent=c.initials;
+  document.getElementById('chatWinName').textContent=c.name;
+  renderChatMsgs(c);
+  document.getElementById('convoListWrap').classList.add('hide');
+  document.getElementById('chatWindow').classList.add('show');
+  hookCursor();
+}
+
+function renderChatMsgs(c){
+  const msgs=document.getElementById('chatMsgs');
+  msgs.innerHTML=c.msgs.map(m=>`<div class="msg ${m.from==='me'?'sent':'recv'}">
+    <div class="msg-bubble">${m.text}</div>
+    <div class="msg-time">${m.time}</div>
+  </div>`).join('');
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function backToConvoList(){
+  activeChatConvo=null;
+  document.getElementById('convoListWrap').classList.remove('hide');
+  document.getElementById('chatWindow').classList.remove('show');
+}
+
+function sendMsg(){
+  const inp=document.getElementById('chatInp');
+  const text=inp.value.trim();if(!text||!activeChatConvo)return;
+  const c=CONVOS.find(x=>x.id===activeChatConvo);if(!c)return;
+  c.msgs.push({from:'me',text,time:'Just now'});
+  inp.value='';
+  renderChatMsgs(c);
+  setTimeout(()=>{
+    c.msgs.push({from:'them',text:'Got it, thanks for reaching out!',time:'Just now'});
+    renderChatMsgs(c);
+  },1500);
+}
+
+function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+
+function renderSupportMsgs(){
+  const msgs=document.getElementById('supportMsgs');
+  msgs.innerHTML=SUPPORT_MSGS.map(m=>`<div class="msg ${m.from==='me'?'sent':'recv'}">
+    ${m.from!=='me'?`<div style="font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--g3);margin-bottom:4px">Kyro Support</div>`:''}
+    <div class="msg-bubble">${m.text}</div>
+    <div class="msg-time">${m.time}</div>
+  </div>`).join('');
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function sendSupportMsg(){
+  const inp=document.getElementById('supportInp');
+  const text=inp.value.trim();if(!text)return;
+  SUPPORT_MSGS.push({from:'me',text,time:'Just now'});
+  inp.value='';
+  renderSupportMsgs();
+  setTimeout(()=>{
+    SUPPORT_MSGS.push({from:'support',text:'Thanks for reaching out. Our team will review your message and respond within 7 days.',time:'Just now'});
+    renderSupportMsgs();
+  },1200);
+}
+
+function handleSupportKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendSupportMsg();}}
+
+function openChatWith(handle){
+  let convo=CONVOS.find(c=>c.handle===handle);
+  if(!convo){
+    convo={id:CONVOS.length+1,handle,name:handle,initials:handle.substring(0,2).toUpperCase(),msgs:[]};
+    CONVOS.push(convo);
+  }
+  openChat();
+  setTimeout(()=>openConvo(convo.id),50);
+}
+
+/* ═══ STRIPE / GITHUB ═══ */
+/* ═══ REAL OAUTH — talks to server.js ═══════════════════════════════════════
+   All OAuth flows redirect through the Node server at localhost:3000.
+   On return, the server sets ?github=connected or ?stripe=connected in the URL.
+   loadAuthStatus() fetches /api/auth/status on every page load and after
+   returning from an OAuth redirect to sync state.githubConnected / stripeConnected
+   and populate real user data (GitHub repos, Stripe account info).
+═══════════════════════════════════════════════════════════════════════════════ */
+
+async function loadAuthStatus(){
+  try{
+    const r=await fetch('/api/auth/status');
+    if(!r.ok)return;
+    const {github,stripe}=await r.json();
+
+    // ── GitHub ──
+    if(github&&github.login){
+      state.githubConnected=true;
+      state.githubUser=github;
+      // Populate real repos into sidebar GitHub section
+      if(github.repos&&github.repos.length){
+        state.githubRepos=github.repos.slice(0,5).map(repo=>({
+          name:repo.name,
+          upd:friendlyDate(repo.updated_at),
+          url:repo.url,
+          lang:repo.language||'',
+          stars:repo.stars||0,
+        }));
+      }
+      // Update avatar initials with real GitHub login
+      const initials=github.login.substring(0,2).toUpperCase();
+      document.querySelectorAll('.u-av').forEach(el=>{
+        if(el.textContent==='AK')el.textContent=initials;
+      });
+      // Show GitHub login in sidebar
+      const nmEl=document.querySelector('.u-nm');
+      if(nmEl)nmEl.textContent='@'+github.login;
+    } else {
+      state.githubConnected=false;
+      state.githubUser=null;
+      state.githubRepos=[];
+    }
+
+    // ── Stripe ──
+    if(stripe&&stripe.stripeUserId){
+      state.stripeConnected=true;
+      state.stripeAccount=stripe;
+      document.getElementById('stripeReminder').style.display='none';
+      // Show connected plan label
+      const plEl=document.querySelector('.u-pl');
+      if(plEl&&stripe.email)plEl.textContent='Stripe: '+stripe.email.split('@')[0];
+    } else {
+      state.stripeConnected=false;
+      state.stripeAccount=null;
+    }
+
+    // Re-render current view to reflect new state
+    if(state.view==='mystore')renderMyStore();
+    else if(state.view==='dashboard')renderDashboard();
+    else if(state.view==='upload')renderUpload();
+    else renderMarketplace();
+
+  }catch(e){
+    // Server not running — silently stay in demo mode
+    console.warn('Kyro server not reachable — running in demo mode.');
+  }
+}
+
+function friendlyDate(iso){
+  if(!iso)return'unknown';
+  const diff=Date.now()-new Date(iso).getTime();
+  const days=Math.floor(diff/86400000);
+  if(days===0)return'today';
+  if(days===1)return'yesterday';
+  if(days<7)return days+' days ago';
+  if(days<30)return Math.floor(days/7)+' weeks ago';
+  if(days<365)return Math.floor(days/30)+' months ago';
+  return Math.floor(days/365)+' years ago';
+}
+
+/* Real GitHub OAuth — redirects to server which redirects to github.com */
+function connectGitHub(){
+  showToast('Redirecting to GitHub...');
+  setTimeout(()=>{window.location.href='/auth/github';},600);
+}
+
+async function disconnectGitHub(){
+  try{
+    await fetch('/api/auth/disconnect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:'github'})});
+  }catch(e){}
+  state.githubConnected=false;state.githubUser=null;state.githubRepos=[];
+  showToast('GitHub disconnected.');
+  if(state.view==='mystore')renderMyStore();
+}
+
+/* Stripe Link — just opens the set-your-link modal */
+function connectStripe(){
+  showStripeModal();
+}
+
+function showStripeModal(context){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+  overlay.innerHTML=`<div style="width:480px;background:#000;border:1px solid rgba(255,255,255,.1);animation:slideUp .3s both">
+    <div style="padding:36px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Your Stripe Link</div>
+      <div style="font-size:12px;color:var(--g2);line-height:1.7;margin-bottom:24px">Paste your Stripe payment link. Buyers click "Buy Now" and are sent directly to your Stripe — you keep 100% of every sale. Kyro never handles payments.</div>
+      <label style="font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;display:block;margin-bottom:8px">Stripe Payment Link</label>
+      <input type="url" id="stripeModalInput" placeholder="https://buy.stripe.com/your-link" value="${state.stripeLink||''}" style="width:100%;padding:11px 13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.15);color:#fff;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:16px;transition:border-color .2s;cursor:text" onfocus="this.style.borderColor='rgba(255,255,255,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.15)'">
+      <button onclick="saveStripeLink(this.closest('[style*=fixed]'))" style="width:100%;padding:14px;background:#fff;color:#000;border:1px solid #fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:none;transition:all .22s;margin-bottom:10px" onmouseover="this.style.background='transparent';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='#000'">Save Stripe Link</button>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:12px;background:transparent;color:var(--g3);border:1px solid rgba(255,255,255,.08);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .2s" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.2)'" onmouseout="this.style.color='var(--g3)';this.style.borderColor='rgba(255,255,255,.08)'">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  hookCursor();
+}
+
+function saveStripeLink(overlay){
+  const val=document.getElementById('stripeModalInput').value.trim();
+  if(val){
+    state.stripeLink=val;
+    localStorage.setItem('kyro_stripe_link',val);
+    showToast('Stripe link saved! Buyers will be sent to your Stripe.');
+  }
+  if(overlay)overlay.remove();
+}
+
+/* ═══ ONBOARDING ═══ */
+function obNext(n){
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('ob'+n).classList.add('active');
+  document.getElementById('obProgress').style.width=(n/4*100)+'%';
+}
+
+function skipOnboarding(){
+  localStorage.setItem('kyro_onboarded','1');
+  document.getElementById('onboardingOverlay').style.display='none';
+}
+
+function finishOnboarding(){
+  const inp=document.getElementById('obStripeLink');
+  if(inp&&inp.value)state.stripeLink=inp.value;
+  localStorage.setItem('kyro_onboarded','1');
+  if(state.stripeLink)localStorage.setItem('kyro_stripe_link',state.stripeLink);
+  document.getElementById('onboardingOverlay').style.display='none';
+  showToast('Welcome to Kyro!');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+/* ═══ Handle OAuth return params in URL ═══ */
+function handleOAuthReturn(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('github')==='connected'){
+    showToast('GitHub connected! Trust Score updated. +40 points.');
+    // Clean URL
+    window.history.replaceState({},'',window.location.pathname);
+  }
+  if(params.get('stripe')==='connected'){
+    showToast('Stripe link saved! Buyers will be directed to your Stripe.');
+    window.history.replaceState({},'',window.location.pathname);
+  }
+  const err=params.get('error');
+  if(err){
+    const msgs={
+      github_not_configured:'GitHub OAuth is not configured. See README.',
+      stripe_not_configured:'Stripe OAuth is not configured. See README.',
+      github_denied:'GitHub authorization was denied.',
+      stripe_denied:'Stripe authorization was denied.',
+      github_token_failed:'GitHub token exchange failed. Check your credentials.',
+      stripe_token_failed:'Stripe token exchange failed. Check your credentials.',
+      github_state_mismatch:'GitHub OAuth state mismatch — possible CSRF.',
+      stripe_state_mismatch:'Stripe OAuth state mismatch — possible CSRF.',
+    };
+    showToast(msgs[err]||'Auth error: '+err);
+    window.history.replaceState({},'',window.location.pathname);
+  }
+}
+
+/* INIT */
+// Restore saved data
+const savedStripe=localStorage.getItem('kyro_stripe_link');
+if(savedStripe)state.stripeLink=savedStripe;
+// Only show onboarding once
+if(localStorage.getItem('kyro_onboarded')){
+  document.getElementById('onboardingOverlay').style.display='none';
+}
+handleOAuthReturn();
+loadAuthStatus();      // fetches /api/auth/status from server.js
+renderMarketplace();
+hookCursor();
+</script>
+</body>
+</html>

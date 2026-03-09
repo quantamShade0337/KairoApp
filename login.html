@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyro — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#000;--white:#fff;--g2:#aaa;--g3:#555;--g4:#1e1e1e;--g5:#0d0d0d}
+body{background:var(--black);color:var(--white);font-family:'DM Mono',monospace;height:100vh;overflow:hidden;cursor:none}
+#cur{position:fixed;width:8px;height:8px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .15s,height .15s}
+#cur-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(255,255,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference}
+body.ch #cur{width:4px;height:4px}body.ch #cur-ring{width:56px;height:56px}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:8999;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");background-size:300px;opacity:.5}
+
+canvas{position:fixed;inset:0;z-index:0}
+.layout{display:grid;grid-template-columns:1fr 1fr;height:100vh;position:relative;z-index:10}
+
+/* LEFT */
+.left{border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;justify-content:space-between;padding:40px 64px;position:relative;overflow:hidden;animation:fadeIn .8s both}
+.l-bg{position:absolute;bottom:-40px;left:-20px;font-family:'Bebas Neue',sans-serif;font-size:220px;color:rgba(255,255,255,.023);letter-spacing:-.06em;text-transform:uppercase;pointer-events:none;line-height:1}
+.l-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.22em;text-decoration:none;color:#fff}
+.l-content{position:relative;z-index:1}
+.l-tag{font-size:10px;letter-spacing:.28em;color:var(--g3);text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:10px}
+.l-tag::before{content:'';width:16px;height:1px;background:var(--g3);display:block}
+.l-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,5.5vw,88px);letter-spacing:.01em;text-transform:uppercase;line-height:.88}
+.l-h .out{-webkit-text-stroke:1px rgba(255,255,255,.26);color:transparent}
+.l-sub{margin-top:28px;font-size:12px;line-height:1.75;color:var(--g2);max-width:360px}
+.l-stats{display:flex;gap:36px;margin-top:44px}
+.l-stat .ln{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.02em;line-height:1;margin-bottom:3px}
+.l-stat .ll{font-size:9px;letter-spacing:.2em;color:var(--g3);text-transform:uppercase}
+.l-foot{font-size:10px;color:var(--g3);letter-spacing:.1em}
+
+/* RIGHT */
+.right{display:flex;flex-direction:column;justify-content:center;padding:40px 72px;animation:fadeIn .8s .2s both}
+.f-head{margin-bottom:44px}
+.f-title{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+.f-sub{font-size:12px;color:var(--g2)}
+.f-sub a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2);transition:border-color .2s}
+.f-sub a:hover{border-color:#fff}
+
+.tabs{display:flex;gap:0;margin-bottom:36px;border:1px solid rgba(255,255,255,.1)}
+.tab{flex:1;padding:12px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--g3);background:transparent;border:none;cursor:none;transition:all .2s}
+.tab.on{background:#fff;color:#000}
+
+.field{margin-bottom:18px}
+.f-lbl{font-size:9px;letter-spacing:.22em;color:var(--g3);text-transform:uppercase;margin-bottom:9px;display:block}
+.f-inp{width:100%;padding:13px 15px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'DM Mono',monospace;font-size:13px;outline:none;transition:border-color .2s,background .2s;cursor:none}
+.f-inp:focus{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.05)}
+.f-inp::placeholder{color:var(--g3)}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.f-opts{display:flex;justify-content:space-between;align-items:center;margin:20px 0}
+.chk-lbl{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--g2);cursor:none}
+.chk{width:16px;height:16px;border:1px solid rgba(255,255,255,.2);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.chk.on{background:#fff}
+.chk.on::after{content:'✓';color:#000;font-size:10px}
+.f-link{font-size:11px;color:var(--g3);text-decoration:none;letter-spacing:.1em;transition:color .2s}
+.f-link:hover{color:#fff}
+
+.submit{width:100%;padding:15px;background:#fff;color:#000;border:1px solid #fff;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;cursor:none;transition:all .22s;margin-bottom:22px}
+.submit:hover{background:transparent;color:#fff}
+
+.div-row{display:flex;align-items:center;gap:14px;margin:22px 0}
+.div-line{flex:1;height:1px;background:rgba(255,255,255,.07)}
+.div-txt{font-size:10px;letter-spacing:.2em;color:var(--g3);text-transform:uppercase}
+
+.oauth{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.o-btn{padding:12px 16px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--g2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:none;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.o-btn:hover{border-color:rgba(255,255,255,.3);color:#fff}
+
+.su-only{display:none}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-ring"></div>
+<canvas id="cv"></canvas>
+<div class="layout">
+  <div class="left">
+    <div class="l-bg">KY</div>
+    <a href="kyro-landing.html" class="l-logo">Kyro</a>
+    <div class="l-content">
+      <div class="l-tag">Developer Marketplace</div>
+      <h2 class="l-h">Your<br>Assets.<br><span class="out">Your</span><br><span class="out">Revenue.</span></h2>
+      <p class="l-sub">The marketplace where developers sell starter kits, templates, APIs, and more. Upload once. Earn forever.</p>
+      <div class="l-stats">
+        <div class="l-stat"><div class="ln">2.8K+</div><div class="ll">Assets</div></div>
+        <div class="l-stat"><div class="ln">960+</div><div class="ll">Creators</div></div>
+        <div class="l-stat"><div class="ln">24K+</div><div class="ll">Downloads</div></div>
+      </div>
+    </div>
+    <div class="l-foot">© 2025 Kyro Inc.</div>
+  </div>
+
+  <div class="right">
+    <div class="f-head">
+      <div class="f-title" id="fTitle">Welcome Back</div>
+      <div class="f-sub" id="fSub">No account? <a href="#" onclick="setMode('signup');return false">Create one free</a></div>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="tabLogin" onclick="setMode('login')">Log In</button>
+      <button class="tab" id="tabSignup" onclick="setMode('signup')">Sign Up</button>
+    </div>
+    <div id="fBody">
+      <div class="f-row su-only" id="nameRow">
+        <div class="field"><label class="f-lbl">First Name</label><input type="text" class="f-inp" placeholder="Ada"></div>
+        <div class="field"><label class="f-lbl">Last Name</label><input type="text" class="f-inp" placeholder="Lovelace"></div>
+      </div>
+      <div class="field su-only" id="unRow"><label class="f-lbl">Username</label><input type="text" class="f-inp" placeholder="@devhandle"></div>
+      <div class="field"><label class="f-lbl">Email</label><input type="email" class="f-inp" placeholder="you@example.com"></div>
+      <div class="field"><label class="f-lbl">Password</label><input type="password" class="f-inp" placeholder="••••••••••••"></div>
+      <div class="f-opts" id="loginOpts">
+        <label class="chk-lbl" onclick="this.querySelector('.chk').classList.toggle('on')"><div class="chk"></div>Remember me</label>
+        <a href="#" class="f-link">Forgot password?</a>
+      </div>
+      <button class="submit" id="submitBtn" onclick="window.location.href='kyro-app.html'">Enter App →</button>
+      <div class="div-row"><div class="div-line"></div><div class="div-txt">or</div><div class="div-line"></div></div>
+      <div class="oauth">
+        <button class="o-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> GitHub</button>
+        <button class="o-btn"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Google</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function ar(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ar);})();
+document.querySelectorAll('a,button,input').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));});
+
+// Particles
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+cv.width=innerWidth;cv.height=innerHeight;
+window.addEventListener('resize',()=>{cv.width=innerWidth;cv.height=innerHeight;});
+const PTS=Array.from({length:55},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,sz:Math.random()*1.2+.3,a:Math.random()*.25+.05}));
+(function draw(){ctx.clearRect(0,0,cv.width,cv.height);PTS.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${p.a})`;ctx.fill();});requestAnimationFrame(draw);})();
+
+function setMode(m){
+  const l=m==='login';
+  document.getElementById('tabLogin').classList.toggle('on',l);
+  document.getElementById('tabSignup').classList.toggle('on',!l);
+  document.getElementById('fTitle').textContent=l?'Welcome Back':'Create Account';
+  document.getElementById('fSub').innerHTML=l?'No account? <a href="#" onclick="setMode(\'signup\');return false">Create one free</a>':'Have an account? <a href="#" onclick="setMode(\'login\');return false">Log in</a>';
+  document.getElementById('submitBtn').textContent=l?'Enter App →':'Create Account →';
+  document.querySelectorAll('.su-only').forEach(el=>el.style.display=l?'none':el.classList.contains('f-row')?'grid':'block');
+  document.getElementById('loginOpts').style.display=l?'flex':'none';
+}
+</script>
+</body>
+</html>
