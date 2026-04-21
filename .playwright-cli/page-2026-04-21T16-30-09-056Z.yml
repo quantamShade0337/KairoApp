@@ -1,0 +1,164 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e32]
+  - generic [ref=e33]:
+    - navigation [ref=e34]:
+      - generic [ref=e35]:
+        - link "Kyro" [ref=e36] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e37]:
+          - link "Explore" [ref=e38] [cursor=pointer]:
+            - /url: /market
+          - link "Pricing" [ref=e39] [cursor=pointer]:
+            - /url: /pricing
+          - link "About" [ref=e40] [cursor=pointer]:
+            - /url: /about
+        - generic [ref=e41]:
+          - link "Dashboard" [ref=e42] [cursor=pointer]:
+            - /url: /dashboard
+          - link "A" [ref=e43] [cursor=pointer]:
+            - /url: /settings
+    - main [ref=e44]:
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - paragraph [ref=e48]: Dashboard
+          - heading "Good to see you, Alex." [level=1] [ref=e49]
+        - generic [ref=e50]:
+          - link "Explore" [ref=e51] [cursor=pointer]:
+            - /url: /market
+          - link "+ New project" [ref=e52] [cursor=pointer]:
+            - /url: /builder/new
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - paragraph [ref=e56]: Projects
+            - paragraph [ref=e57]: "4"
+          - generic [ref=e58]:
+            - paragraph [ref=e59]: Published
+            - paragraph [ref=e60]: "2"
+          - generic [ref=e61]:
+            - paragraph [ref=e62]: Total uses
+            - paragraph [ref=e63]: 22,882
+          - generic [ref=e64]:
+            - paragraph [ref=e65]: Clones
+            - paragraph [ref=e66]: "1029"
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - heading "Recent projects" [level=2] [ref=e69]
+            - link "New project +" [ref=e70] [cursor=pointer]:
+              - /url: /builder/new
+              - text: New project
+              - generic [ref=e71]: +
+          - generic [ref=e72]:
+            - link "Untitled project Built on Kyro. Published 1 hour ago →" [ref=e73] [cursor=pointer]:
+              - /url: /builder/da58084e-842c-4182-8cde-c4e7d97436c2
+              - generic [ref=e76]:
+                - paragraph [ref=e77]: Untitled project
+                - paragraph [ref=e78]: Built on Kyro.
+              - generic [ref=e79]:
+                - generic [ref=e80]: Published
+                - generic [ref=e81]: 1 hour ago
+                - generic [ref=e82]: →
+            - link "Invoice Generator Generate clean PDF invoices for freelancers. A M Draft 1 hour ago →" [ref=e83] [cursor=pointer]:
+              - /url: /builder/p1
+              - generic [ref=e86]:
+                - paragraph [ref=e87]: Invoice Generator
+                - paragraph [ref=e88]: Generate clean PDF invoices for freelancers.
+              - generic [ref=e89]:
+                - generic [ref=e90]:
+                  - generic "@alexc" [ref=e91]: A
+                  - generic "@mayap" [ref=e92]: M
+                - generic [ref=e93]: Draft
+                - generic [ref=e94]: 1 hour ago
+                - generic [ref=e95]: →
+            - link "Reading List Tracker Track books with notes and reading progress. A Published 1 hour ago →" [ref=e96] [cursor=pointer]:
+              - /url: /builder/p2
+              - generic [ref=e99]:
+                - paragraph [ref=e100]: Reading List Tracker
+                - paragraph [ref=e101]: Track books with notes and reading progress.
+              - generic [ref=e102]:
+                - generic "@alexc" [ref=e104]: A
+                - generic [ref=e105]: Published
+                - generic [ref=e106]: 1 hour ago
+                - generic [ref=e107]: →
+            - link "Code Snippet Manager Save and search reusable code snippets. A D C Private 1 hour ago →" [ref=e108] [cursor=pointer]:
+              - /url: /builder/p3
+              - generic [ref=e111]:
+                - paragraph [ref=e112]: Code Snippet Manager
+                - paragraph [ref=e113]: Save and search reusable code snippets.
+              - generic [ref=e114]:
+                - generic [ref=e115]:
+                  - generic "@alexc" [ref=e116]: A
+                  - generic "@devn" [ref=e117]: D
+                  - generic "@chrism" [ref=e118]: C
+                - generic [ref=e119]: Private
+                - generic [ref=e120]: 1 hour ago
+                - generic [ref=e121]: →
+        - generic [ref=e122]:
+          - generic [ref=e123]:
+            - heading "Published apps" [level=2] [ref=e124]
+            - link "View profile →" [ref=e125] [cursor=pointer]:
+              - /url: /profile/alexc
+          - generic [ref=e126]:
+            - link "Link Shortener Shorten URLs with custom aliases and click tracking. 5,500 uses 210 clones" [ref=e127] [cursor=pointer]:
+              - /url: /market/12
+              - paragraph [ref=e128]: Link Shortener
+              - paragraph [ref=e129]: Shorten URLs with custom aliases and click tracking.
+              - generic [ref=e130]:
+                - generic [ref=e131]: 5,500 uses
+                - generic [ref=e132]: 210 clones
+            - link "API Tester Lightweight REST API client. No account required. 4,800 uses 301 clones" [ref=e133] [cursor=pointer]:
+              - /url: /market/10
+              - paragraph [ref=e134]: API Tester
+              - paragraph [ref=e135]: Lightweight REST API client. No account required.
+              - generic [ref=e136]:
+                - generic [ref=e137]: 4,800 uses
+                - generic [ref=e138]: 301 clones
+            - link "Pomodoro Timer Focus timer with configurable work and break intervals. 4,420 uses 199 clones" [ref=e139] [cursor=pointer]:
+              - /url: /market/7
+              - paragraph [ref=e140]: Pomodoro Timer
+              - paragraph [ref=e141]: Focus timer with configurable work and break intervals.
+              - generic [ref=e142]:
+                - generic [ref=e143]: 4,420 uses
+                - generic [ref=e144]: 199 clones
+            - link "Color Palette Gen Generate harmonious color palettes from a single hex. 3,340 uses 97 clones" [ref=e145] [cursor=pointer]:
+              - /url: /market/3
+              - paragraph [ref=e146]: Color Palette Gen
+              - paragraph [ref=e147]: Generate harmonious color palettes from a single hex.
+              - generic [ref=e148]:
+                - generic [ref=e149]: 3,340 uses
+                - generic [ref=e150]: 97 clones
+            - link "Markdown Editor Clean markdown editor with live preview and export. 2,841 uses 134 clones" [ref=e151] [cursor=pointer]:
+              - /url: /market/1
+              - paragraph [ref=e152]: Markdown Editor
+              - paragraph [ref=e153]: Clean markdown editor with live preview and export.
+              - generic [ref=e154]:
+                - generic [ref=e155]: 2,841 uses
+                - generic [ref=e156]: 134 clones
+            - link "Budget Tracker Simple income and expense tracker with monthly overview. 1,980 uses 88 clones" [ref=e157] [cursor=pointer]:
+              - /url: /market/6
+              - paragraph [ref=e158]: Budget Tracker
+              - paragraph [ref=e159]: Simple income and expense tracker with monthly overview.
+              - generic [ref=e160]:
+                - generic [ref=e161]: 1,980 uses
+                - generic [ref=e162]: 88 clones
+            - link "Untitled project Built on Kyro. 1 uses 0 clones" [ref=e163] [cursor=pointer]:
+              - /url: /market/16b4f237-772d-49c9-94d1-472d1cf886a9
+              - paragraph [ref=e164]: Untitled project
+              - paragraph [ref=e165]: Built on Kyro.
+              - generic [ref=e166]:
+                - generic [ref=e167]: 1 uses
+                - generic [ref=e168]: 0 clones
+    - contentinfo [ref=e169]:
+      - generic [ref=e170]:
+        - paragraph [ref=e171]: © 2026 Kyro. All rights reserved.
+        - generic [ref=e172]:
+          - link "About" [ref=e173] [cursor=pointer]:
+            - /url: /about
+          - link "Pricing" [ref=e174] [cursor=pointer]:
+            - /url: /pricing
+          - link "Terms" [ref=e175] [cursor=pointer]:
+            - /url: /legal/terms
+          - link "Privacy" [ref=e176] [cursor=pointer]:
+            - /url: /legal/privacy
+          - link "Explore" [ref=e177] [cursor=pointer]:
+            - /url: /market

@@ -1,0 +1,82 @@
+- generic [ref=e1]:
+  - alert [ref=e76]
+  - generic [ref=e110]:
+    - navigation [ref=e111]:
+      - generic [ref=e112]:
+        - link "Kyro" [ref=e113] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e114]:
+          - link "Explore" [ref=e115] [cursor=pointer]:
+            - /url: /market
+            - text: Explore
+          - link "About" [ref=e117] [cursor=pointer]:
+            - /url: /about
+        - generic [ref=e118]:
+          - link "Dashboard" [ref=e119] [cursor=pointer]:
+            - /url: /dashboard
+          - link "A" [ref=e120] [cursor=pointer]:
+            - /url: /settings
+    - main [ref=e121]:
+      - generic [ref=e123]:
+        - link "Explore" [ref=e124] [cursor=pointer]:
+          - /url: /market
+        - generic [ref=e125]: /
+        - generic [ref=e126]: JSON Formatter
+      - generic [ref=e128]:
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e136]: JSON Formatter
+              - generic [ref=e139]: live
+            - generic [ref=e141]:
+              - textbox [ref=e142]: "{ \"user\": { \"name\": \"Alex Chen\", \"role\": \"admin\" }, \"active\": true }"
+              - generic [ref=e143]:
+                - generic [ref=e144]: Format
+                - generic [ref=e145]: Minify
+                - generic [ref=e146]: Validate
+                - generic [ref=e147]: Valid JSON
+          - generic [ref=e148]:
+            - link "dev" [ref=e149] [cursor=pointer]:
+              - /url: /market?q=dev
+            - link "json" [ref=e150] [cursor=pointer]:
+              - /url: /market?q=json
+            - link "utility" [ref=e151] [cursor=pointer]:
+              - /url: /market?q=utility
+        - generic [ref=e152]:
+          - generic [ref=e153]:
+            - paragraph [ref=e154]: Dev
+            - heading "JSON Formatter" [level=1] [ref=e155]
+            - paragraph [ref=e156]: Instantly format, validate, and minify JSON.
+          - generic [ref=e157]:
+            - button "Use app" [ref=e158]
+            - button "Clone" [ref=e159]
+            - button "Saved" [active] [ref=e184]
+          - paragraph [ref=e185]: Saved to your account.
+          - generic [ref=e161]:
+            - paragraph [ref=e162]: Creator
+            - link "D Dev Nair" [ref=e163] [cursor=pointer]:
+              - /url: /profile/devn
+              - generic [ref=e164]: D
+              - generic [ref=e165]: Dev Nair
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - paragraph [ref=e168]: Uses
+              - paragraph [ref=e169]: 9,100
+            - generic [ref=e170]:
+              - paragraph [ref=e171]: Clones
+              - paragraph [ref=e172]: "320"
+            - generic [ref=e173]:
+              - paragraph [ref=e174]: Since
+              - paragraph [ref=e175]: "2024"
+    - contentinfo [ref=e176]:
+      - generic [ref=e177]:
+        - paragraph [ref=e178]: © 2026 Kyro. All rights reserved.
+        - generic [ref=e179]:
+          - link "About" [ref=e180] [cursor=pointer]:
+            - /url: /about
+          - link "Terms" [ref=e181] [cursor=pointer]:
+            - /url: /legal/terms
+          - link "Privacy" [ref=e182] [cursor=pointer]:
+            - /url: /legal/privacy
+          - link "Explore" [ref=e183] [cursor=pointer]:
+            - /url: /market

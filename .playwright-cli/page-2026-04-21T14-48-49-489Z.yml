@@ -1,0 +1,248 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Kyro" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e6]:
+          - link "Explore" [ref=e7] [cursor=pointer]:
+            - /url: /market
+          - link "About" [ref=e8] [cursor=pointer]:
+            - /url: /about
+    - generic [ref=e13]:
+      - generic [ref=e16]: 12 apps live now
+      - heading "Build apps. Together. Use them instantly." [level=1] [ref=e17]:
+        - text: Build apps.
+        - text: Together.
+        - text: Use them instantly.
+      - paragraph [ref=e18]: Kyro is a multiplayer app builder where anything you create can be used, cloned, and remixed by anyone.
+      - generic [ref=e19]:
+        - link "Explore apps" [ref=e20] [cursor=pointer]:
+          - /url: /market
+        - link "Start building" [ref=e21] [cursor=pointer]:
+          - /url: /onboarding
+    - generic [ref=e23]:
+      - link "JSON Formatter 9,100 uses" [ref=e24] [cursor=pointer]:
+        - /url: /market/5
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: JSON Formatter
+          - paragraph [ref=e28]: 9,100 uses
+      - link "AI Text Summarizer 7,800 uses" [ref=e29] [cursor=pointer]:
+        - /url: /market/4
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: AI Text Summarizer
+          - paragraph [ref=e33]: 7,800 uses
+      - link "Regex Tester 6,600 uses" [ref=e34] [cursor=pointer]:
+        - /url: /market/8
+        - generic [ref=e36]:
+          - paragraph [ref=e37]: Regex Tester
+          - paragraph [ref=e38]: 6,600 uses
+      - link "Link Shortener 5,500 uses" [ref=e39] [cursor=pointer]:
+        - /url: /market/12
+        - generic [ref=e41]:
+          - paragraph [ref=e42]: Link Shortener
+          - paragraph [ref=e43]: 5,500 uses
+      - link "Resume Builder 5,120 uses" [ref=e44] [cursor=pointer]:
+        - /url: /market/2
+        - generic [ref=e46]:
+          - paragraph [ref=e47]: Resume Builder
+          - paragraph [ref=e48]: 5,120 uses
+      - link "API Tester 4,800 uses" [ref=e49] [cursor=pointer]:
+        - /url: /market/10
+        - generic [ref=e51]:
+          - paragraph [ref=e52]: API Tester
+          - paragraph [ref=e53]: 4,800 uses
+      - link "JSON Formatter 9,100 uses" [ref=e54] [cursor=pointer]:
+        - /url: /market/5
+        - generic [ref=e56]:
+          - paragraph [ref=e57]: JSON Formatter
+          - paragraph [ref=e58]: 9,100 uses
+      - link "AI Text Summarizer 7,800 uses" [ref=e59] [cursor=pointer]:
+        - /url: /market/4
+        - generic [ref=e61]:
+          - paragraph [ref=e62]: AI Text Summarizer
+          - paragraph [ref=e63]: 7,800 uses
+      - link "Regex Tester 6,600 uses" [ref=e64] [cursor=pointer]:
+        - /url: /market/8
+        - generic [ref=e66]:
+          - paragraph [ref=e67]: Regex Tester
+          - paragraph [ref=e68]: 6,600 uses
+      - link "Link Shortener 5,500 uses" [ref=e69] [cursor=pointer]:
+        - /url: /market/12
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Link Shortener
+          - paragraph [ref=e73]: 5,500 uses
+      - link "Resume Builder 5,120 uses" [ref=e74] [cursor=pointer]:
+        - /url: /market/2
+        - generic [ref=e76]:
+          - paragraph [ref=e77]: Resume Builder
+          - paragraph [ref=e78]: 5,120 uses
+      - link "API Tester 4,800 uses" [ref=e79] [cursor=pointer]:
+        - /url: /market/10
+        - generic [ref=e81]:
+          - paragraph [ref=e82]: API Tester
+          - paragraph [ref=e83]: 4,800 uses
+    - generic [ref=e85]:
+      - generic [ref=e86]:
+        - paragraph [ref=e87]: How it works
+        - heading "The loop" [level=2] [ref=e88]
+      - generic [ref=e89]:
+        - generic [ref=e90]:
+          - generic [ref=e91]: "01"
+          - heading "Discover" [level=3] [ref=e92]
+          - paragraph [ref=e93]: Browse apps built by creators. Try anything instantly — no setup.
+        - generic [ref=e94]:
+          - generic [ref=e95]: "02"
+          - heading "Clone & modify" [level=3] [ref=e96]
+          - paragraph [ref=e97]: Fork any app, change it to fit your needs, ship it as your own.
+        - generic [ref=e98]:
+          - generic [ref=e99]: "03"
+          - heading "Publish" [level=3] [ref=e100]
+          - paragraph [ref=e101]: Others find it, use it, and build on top of it. The loop continues.
+    - generic [ref=e103]:
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - paragraph [ref=e106]: Apps
+          - heading "Built by the community" [level=2] [ref=e107]
+        - link "View all →" [ref=e108] [cursor=pointer]:
+          - /url: /market
+      - generic [ref=e109]:
+        - link "JSON Formatter Dev Instantly format, validate, and minify JSON. Dev Nair 9,100 uses Open →" [ref=e110] [cursor=pointer]:
+          - /url: /market/5
+          - generic [ref=e111]:
+            - heading "JSON Formatter" [level=3] [ref=e112]
+            - generic [ref=e113]: Dev
+          - paragraph [ref=e114]: Instantly format, validate, and minify JSON.
+          - generic [ref=e115]:
+            - generic [ref=e116]: Dev Nair
+            - generic [ref=e117]:
+              - generic [ref=e118]: 9,100 uses
+              - generic [ref=e119]: Open →
+        - link "AI Text Summarizer AI Paste any text, get a concise summary in one click. Sarah Kim 7,800 uses Open →" [ref=e120] [cursor=pointer]:
+          - /url: /market/4
+          - generic [ref=e121]:
+            - heading "AI Text Summarizer" [level=3] [ref=e122]
+            - generic [ref=e123]: AI
+          - paragraph [ref=e124]: Paste any text, get a concise summary in one click.
+          - generic [ref=e125]:
+            - generic [ref=e126]: Sarah Kim
+            - generic [ref=e127]:
+              - generic [ref=e128]: 7,800 uses
+              - generic [ref=e129]: Open →
+        - link "Regex Tester Dev Test and debug regular expressions with live match highlighting. Dev Nair 6,600 uses Open →" [ref=e130] [cursor=pointer]:
+          - /url: /market/8
+          - generic [ref=e131]:
+            - heading "Regex Tester" [level=3] [ref=e132]
+            - generic [ref=e133]: Dev
+          - paragraph [ref=e134]: Test and debug regular expressions with live match highlighting.
+          - generic [ref=e135]:
+            - generic [ref=e136]: Dev Nair
+            - generic [ref=e137]:
+              - generic [ref=e138]: 6,600 uses
+              - generic [ref=e139]: Open →
+        - link "Link Shortener Tools Shorten URLs with custom aliases and click tracking. Alex Chen 5,500 uses Open →" [ref=e140] [cursor=pointer]:
+          - /url: /market/12
+          - generic [ref=e141]:
+            - heading "Link Shortener" [level=3] [ref=e142]
+            - generic [ref=e143]: Tools
+          - paragraph [ref=e144]: Shorten URLs with custom aliases and click tracking.
+          - generic [ref=e145]:
+            - generic [ref=e146]: Alex Chen
+            - generic [ref=e147]:
+              - generic [ref=e148]: 5,500 uses
+              - generic [ref=e149]: Open →
+        - link "Resume Builder Productivity Generate clean, ATS-friendly resumes in minutes. Maya Patel 5,120 uses Open →" [ref=e150] [cursor=pointer]:
+          - /url: /market/2
+          - generic [ref=e151]:
+            - heading "Resume Builder" [level=3] [ref=e152]
+            - generic [ref=e153]: Productivity
+          - paragraph [ref=e154]: Generate clean, ATS-friendly resumes in minutes.
+          - generic [ref=e155]:
+            - generic [ref=e156]: Maya Patel
+            - generic [ref=e157]:
+              - generic [ref=e158]: 5,120 uses
+              - generic [ref=e159]: Open →
+        - link "API Tester Dev Lightweight REST API client. No account required. Alex Chen 4,800 uses Open →" [ref=e160] [cursor=pointer]:
+          - /url: /market/10
+          - generic [ref=e161]:
+            - heading "API Tester" [level=3] [ref=e162]
+            - generic [ref=e163]: Dev
+          - paragraph [ref=e164]: Lightweight REST API client. No account required.
+          - generic [ref=e165]:
+            - generic [ref=e166]: Alex Chen
+            - generic [ref=e167]:
+              - generic [ref=e168]: 4,800 uses
+              - generic [ref=e169]: Open →
+    - generic [ref=e171]:
+      - generic [ref=e172]:
+        - paragraph [ref=e173]: Creators
+        - heading "People building on Kyro" [level=2] [ref=e174]
+      - generic [ref=e175]:
+        - link "A Alex Chen @alexc Building tools for developers. Obsessed with simplicity. 6 apps 22,881 uses" [ref=e176] [cursor=pointer]:
+          - /url: /profile/alexc
+          - generic [ref=e177]:
+            - generic [ref=e178]: A
+            - generic [ref=e179]:
+              - paragraph [ref=e180]: Alex Chen
+              - paragraph [ref=e181]: "@alexc"
+          - paragraph [ref=e182]: Building tools for developers. Obsessed with simplicity.
+          - generic [ref=e183]:
+            - generic [ref=e184]: 6 apps
+            - generic [ref=e185]: 22,881 uses
+        - link "D Dev Nair @devn Dev utilities that should have existed years ago. 2 apps 15,700 uses" [ref=e186] [cursor=pointer]:
+          - /url: /profile/devn
+          - generic [ref=e187]:
+            - generic [ref=e188]: D
+            - generic [ref=e189]:
+              - paragraph [ref=e190]: Dev Nair
+              - paragraph [ref=e191]: "@devn"
+          - paragraph [ref=e192]: Dev utilities that should have existed years ago.
+          - generic [ref=e193]:
+            - generic [ref=e194]: 2 apps
+            - generic [ref=e195]: 15,700 uses
+        - link "S Sarah Kim @sarahk AI tools for everyday people. Less friction, more output. 2 apps 11,700 uses" [ref=e196] [cursor=pointer]:
+          - /url: /profile/sarahk
+          - generic [ref=e197]:
+            - generic [ref=e198]: S
+            - generic [ref=e199]:
+              - paragraph [ref=e200]: Sarah Kim
+              - paragraph [ref=e201]: "@sarahk"
+          - paragraph [ref=e202]: AI tools for everyday people. Less friction, more output.
+          - generic [ref=e203]:
+            - generic [ref=e204]: 2 apps
+            - generic [ref=e205]: 11,700 uses
+        - link "M Maya Patel @mayap Product designer turned builder. I make things I wish existed. 2 apps 7,320 uses" [ref=e206] [cursor=pointer]:
+          - /url: /profile/mayap
+          - generic [ref=e207]:
+            - generic [ref=e208]: M
+            - generic [ref=e209]:
+              - paragraph [ref=e210]: Maya Patel
+              - paragraph [ref=e211]: "@mayap"
+          - paragraph [ref=e212]: Product designer turned builder. I make things I wish existed.
+          - generic [ref=e213]:
+            - generic [ref=e214]: 2 apps
+            - generic [ref=e215]: 7,320 uses
+    - generic [ref=e217]:
+      - paragraph [ref=e218]: Ready?
+      - heading "Ship something useful. Today." [level=2] [ref=e219]:
+        - text: Ship something useful.
+        - text: Today.
+      - paragraph [ref=e220]: Join creators shipping small tools that people actually use every day.
+      - generic [ref=e221]:
+        - link "Get started free" [ref=e222] [cursor=pointer]:
+          - /url: /onboarding
+        - link "Browse apps" [ref=e223] [cursor=pointer]:
+          - /url: /market
+    - contentinfo [ref=e224]:
+      - generic [ref=e225]:
+        - paragraph [ref=e226]: © 2026 Kyro. All rights reserved.
+        - generic [ref=e227]:
+          - link "About" [ref=e228] [cursor=pointer]:
+            - /url: /about
+          - link "Terms" [ref=e229] [cursor=pointer]:
+            - /url: /legal/terms
+          - link "Privacy" [ref=e230] [cursor=pointer]:
+            - /url: /legal/privacy
+          - link "Explore" [ref=e231] [cursor=pointer]:
+            - /url: /market
+  - alert [ref=e232]

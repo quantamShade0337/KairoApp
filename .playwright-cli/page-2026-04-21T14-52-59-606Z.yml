@@ -1,0 +1,52 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - link "Kyro" [ref=e5] [cursor=pointer]:
+          - /url: /dashboard
+        - generic [ref=e6]: /
+        - button "Untitled project" [ref=e61]
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - generic "@alexc is online" [ref=e10]: A
+          - generic "@mayap is online" [ref=e11]: M
+        - button "Save" [active] [ref=e13]
+        - button "Publish" [ref=e14]
+        - button "Export" [ref=e15]
+    - generic [ref=e62]: Sign in to create projects.
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - generic [ref=e21]: Editor
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]: "1"
+            - generic [ref=e25]: "2"
+            - generic [ref=e26]: "3"
+            - generic [ref=e27]: "4"
+            - generic [ref=e28]: "5"
+            - generic [ref=e29]: "6"
+            - generic [ref=e30]: "7"
+            - generic [ref=e31]: "8"
+            - generic [ref=e32]: "9"
+            - generic [ref=e33]: "10"
+            - generic [ref=e34]: "11"
+            - generic [ref=e35]: "12"
+            - generic [ref=e36]: "13"
+            - generic [ref=e37]: "14"
+            - generic [ref=e38]: "15"
+          - textbox [ref=e39]: "// My App // Start building here export default function App() { return ( <div className=\"p-8\"> <h1 className=\"text-2xl font-semibold mb-4\"> My App </h1> <p className=\"text-gray-600\"> Edit this to get started. </p> </div> ); }"
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]: Project preview
+          - generic [ref=e45]: up to date
+        - generic [ref=e47]:
+          - heading "Untitled project" [level=1] [ref=e48]
+          - paragraph [ref=e49]: Built on Kyro.
+          - paragraph [ref=e50]: This is a lightweight shell preview for your project metadata. Runtime code execution is not enabled in the builder yet.
+    - generic [ref=e54]:
+      - generic [ref=e55]: 15 lines
+      - generic [ref=e56]: ·
+      - generic [ref=e57]: JSX
+      - generic [ref=e58]: ·
+      - generic [ref=e59]: ⌘S to save
+  - alert [ref=e60]

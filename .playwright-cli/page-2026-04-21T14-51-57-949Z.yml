@@ -1,0 +1,29 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e76]
+  - generic [ref=e77]:
+    - link "Kyro" [ref=e79] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e85]:
+      - paragraph [ref=e87]: Sign in to save apps and keep track of what you want to revisit.
+      - generic [ref=e88]:
+        - button "Create account" [ref=e89]
+        - button "Sign in" [ref=e90]
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - paragraph [ref=e93]: Sign in
+          - heading "Welcome back" [level=1] [ref=e94]
+          - paragraph [ref=e95]: Pick up where you left off.
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - generic [ref=e98]: Email
+            - textbox "alexc@kyro.dev" [ref=e99]
+          - generic [ref=e100]:
+            - generic [ref=e101]: Password
+            - generic [ref=e102]:
+              - textbox "password123" [ref=e103]
+              - button "show" [ref=e104]
+        - button "Sign in" [disabled] [ref=e105]
+        - generic [ref=e106]:
+          - paragraph [ref=e107]: Demo account
+          - paragraph [ref=e108]: "`alexc@kyro.dev`"
+          - paragraph [ref=e109]: "`password123`"

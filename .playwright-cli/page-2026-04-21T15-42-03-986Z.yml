@@ -1,0 +1,48 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Kyro" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e6]:
+          - link "Explore" [ref=e7] [cursor=pointer]:
+            - /url: /market
+          - link "Pricing" [ref=e8] [cursor=pointer]:
+            - /url: /pricing
+          - link "About" [ref=e9] [cursor=pointer]:
+            - /url: /about
+        - generic [ref=e10]:
+          - link "Sign in" [ref=e11] [cursor=pointer]:
+            - /url: /onboarding?mode=signin
+          - link "Get started" [ref=e12] [cursor=pointer]:
+            - /url: /onboarding?mode=signup
+    - main [ref=e13]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - paragraph [ref=e17]: Dashboard
+          - heading "Your workspace" [level=1] [ref=e18]
+        - generic [ref=e19]:
+          - link "Explore" [ref=e20] [cursor=pointer]:
+            - /url: /market
+          - link "Sign in to build" [ref=e21] [cursor=pointer]:
+            - /url: /onboarding?mode=signin&redirectTo=%2Fdashboard&reason=Sign%20in%20to%20open%20your%20dashboard.
+      - generic [ref=e24]:
+        - paragraph [ref=e25]: You need an account to view the dashboard
+        - paragraph [ref=e26]: Sign in to view your dashboard.
+        - link "Sign in to continue" [ref=e27] [cursor=pointer]:
+          - /url: /onboarding?mode=signin&redirectTo=%2Fdashboard&reason=Sign%20in%20to%20open%20your%20dashboard.
+    - contentinfo [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: © 2026 Kyro. All rights reserved.
+        - generic [ref=e31]:
+          - link "About" [ref=e32] [cursor=pointer]:
+            - /url: /about
+          - link "Pricing" [ref=e33] [cursor=pointer]:
+            - /url: /pricing
+          - link "Terms" [ref=e34] [cursor=pointer]:
+            - /url: /legal/terms
+          - link "Privacy" [ref=e35] [cursor=pointer]:
+            - /url: /legal/privacy
+          - link "Explore" [ref=e36] [cursor=pointer]:
+            - /url: /market
+  - alert [ref=e37]

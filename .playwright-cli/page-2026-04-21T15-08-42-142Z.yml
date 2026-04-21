@@ -1,0 +1,134 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "Kyro" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e6]:
+          - link "Explore" [ref=e7] [cursor=pointer]:
+            - /url: /market
+          - link "Pricing" [ref=e8] [cursor=pointer]:
+            - /url: /pricing
+            - text: Pricing
+          - link "About" [ref=e10] [cursor=pointer]:
+            - /url: /about
+        - generic [ref=e11]:
+          - link "Sign in" [ref=e12] [cursor=pointer]:
+            - /url: /onboarding
+          - link "Get started" [ref=e13] [cursor=pointer]:
+            - /url: /onboarding
+    - main [ref=e14]:
+      - generic [ref=e17]:
+        - heading "Pricing for apps built around prompts, not scaffolding." [level=1] [ref=e18]:
+          - text: Pricing for apps
+          - text: built around prompts,
+          - text: not scaffolding.
+        - paragraph [ref=e19]: Start free with your own OpenAI or Claude key, then move up when you need more published apps, better collaboration, and a tighter workflow around AI product launches.
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - paragraph [ref=e24]: Free
+            - generic [ref=e25]:
+              - generic [ref=e26]: $0
+              - generic [ref=e27]: For prototypes and first drafts
+            - paragraph [ref=e28]: Shape one or two AI apps, test prompts, and connect your own OpenAI or Claude key before you share anything widely.
+          - generic [ref=e30]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: •
+              - paragraph [ref=e33]: Up to 3 saved drafts
+            - generic [ref=e34]:
+              - generic [ref=e35]: •
+              - paragraph [ref=e36]: Bring your own OpenAI or Claude key
+            - generic [ref=e37]:
+              - generic [ref=e38]: •
+              - paragraph [ref=e39]: Private publishing
+            - generic [ref=e40]:
+              - generic [ref=e41]: •
+              - paragraph [ref=e42]: Community marketplace access
+          - link "Start free" [ref=e43] [cursor=pointer]:
+            - /url: /onboarding
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - paragraph [ref=e46]: Pro
+            - generic [ref=e47]:
+              - generic [ref=e48]: $24
+              - generic [ref=e49]: per month
+            - paragraph [ref=e50]: For solo builders shipping polished assistants, internal tools, and customer-facing AI experiences on a regular cadence.
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - generic [ref=e54]: •
+              - paragraph [ref=e55]: Unlimited drafts
+            - generic [ref=e56]:
+              - generic [ref=e57]: •
+              - paragraph [ref=e58]: Public apps and remix attribution
+            - generic [ref=e59]:
+              - generic [ref=e60]: •
+              - paragraph [ref=e61]: Priority publishing slots
+            - generic [ref=e62]:
+              - generic [ref=e63]: •
+              - paragraph [ref=e64]: Version history and prompt snapshots
+          - link "Go Pro" [ref=e65] [cursor=pointer]:
+            - /url: /onboarding
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - paragraph [ref=e68]: Studio
+            - generic [ref=e69]:
+              - generic [ref=e70]: $99
+              - generic [ref=e71]: per month
+            - paragraph [ref=e72]: For teams standardizing how they design, test, and publish AI products without building the entire stack from scratch.
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]: •
+              - paragraph [ref=e77]: Shared workspaces
+            - generic [ref=e78]:
+              - generic [ref=e79]: •
+              - paragraph [ref=e80]: Collaborator roles
+            - generic [ref=e81]:
+              - generic [ref=e82]: •
+              - paragraph [ref=e83]: Internal app collections
+            - generic [ref=e84]:
+              - generic [ref=e85]: •
+              - paragraph [ref=e86]: Early access to hosted runtime features
+          - link "Talk to us" [ref=e87] [cursor=pointer]:
+            - /url: /about
+      - generic [ref=e89]:
+        - generic [ref=e90]:
+          - heading "What every plan includes" [level=2] [ref=e91]
+          - generic [ref=e92]:
+            - generic [ref=e93]: Prompt-first app builder
+            - generic [ref=e94]: OpenAI or Anthropic provider settings
+            - generic [ref=e95]: Draft saving and publishing
+            - generic [ref=e96]: Marketplace discovery and remixing
+        - generic [ref=e97]:
+          - heading "FAQ" [level=2] [ref=e98]
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - paragraph [ref=e101]: Do I need my own OpenAI or Claude key?
+              - paragraph [ref=e102]: Yes. Kyro is currently built around bring-your-own-model access, so you can test with your own OpenAI or Anthropic credentials from day one.
+            - generic [ref=e103]:
+              - paragraph [ref=e104]: Can I publish private apps?
+              - paragraph [ref=e105]: Yes. Free lets you keep drafts private, while paid plans are better once you want to share widely, collaborate, or keep a larger library of apps.
+            - generic [ref=e106]:
+              - paragraph [ref=e107]: What am I really paying for?
+              - paragraph [ref=e108]: You are paying for the builder workflow, publishing surface, versioning, and team collaboration layer around your model connection.
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - paragraph [ref=e112]: Build the first version with your own model key.
+          - paragraph [ref=e113]: You can upgrade later when the app is worth sharing broadly.
+        - link "Open builder" [ref=e114] [cursor=pointer]:
+          - /url: /builder/new
+    - contentinfo [ref=e115]:
+      - generic [ref=e116]:
+        - paragraph [ref=e117]: © 2026 Kyro. All rights reserved.
+        - generic [ref=e118]:
+          - link "About" [ref=e119] [cursor=pointer]:
+            - /url: /about
+          - link "Pricing" [ref=e120] [cursor=pointer]:
+            - /url: /pricing
+          - link "Terms" [ref=e121] [cursor=pointer]:
+            - /url: /legal/terms
+          - link "Privacy" [ref=e122] [cursor=pointer]:
+            - /url: /legal/privacy
+          - link "Explore" [ref=e123] [cursor=pointer]:
+            - /url: /market
+  - alert [ref=e124]

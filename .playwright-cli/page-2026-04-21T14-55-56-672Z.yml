@@ -1,0 +1,51 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - link "Kyro" [ref=e5] [cursor=pointer]:
+          - /url: /dashboard
+        - generic [ref=e6]: /
+        - textbox [active] [ref=e7]: Untitled project
+      - generic [ref=e8]:
+        - link "Sign in to save" [ref=e9] [cursor=pointer]:
+          - /url: /onboarding?mode=signin&redirectTo=%2Fbuilder%2Fnew&reason=Sign%20in%20to%20save%20this%20draft%2C%20publish%20it%20later%2C%20and%20keep%20your%20work%20in%20one%20place.
+        - button "Save" [ref=e10]
+        - button "Publish" [ref=e11]
+        - button "Export" [ref=e12]
+    - generic [ref=e13]: Save once to create your project and unlock publishing.
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e18]: Editor
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: "1"
+            - generic [ref=e22]: "2"
+            - generic [ref=e23]: "3"
+            - generic [ref=e24]: "4"
+            - generic [ref=e25]: "5"
+            - generic [ref=e26]: "6"
+            - generic [ref=e27]: "7"
+            - generic [ref=e28]: "8"
+            - generic [ref=e29]: "9"
+            - generic [ref=e30]: "10"
+            - generic [ref=e31]: "11"
+            - generic [ref=e32]: "12"
+            - generic [ref=e33]: "13"
+            - generic [ref=e34]: "14"
+            - generic [ref=e35]: "15"
+          - textbox [ref=e36]: "// My App // Start building here export default function App() { return ( <div className=\"p-8\"> <h1 className=\"text-2xl font-semibold mb-4\"> My App </h1> <p className=\"text-gray-600\"> Edit this to get started. </p> </div> ); }"
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: Project preview
+          - generic [ref=e42]: up to date
+        - generic [ref=e44]:
+          - heading "Untitled project" [level=1] [ref=e45]
+          - paragraph [ref=e46]: Built on Kyro.
+          - paragraph [ref=e47]: This is a lightweight shell preview for your project metadata. Runtime code execution is not enabled in the builder yet.
+    - generic [ref=e51]:
+      - generic [ref=e52]: 15 lines
+      - generic [ref=e53]: ·
+      - generic [ref=e54]: JSX
+      - generic [ref=e55]: ·
+      - generic [ref=e56]: ⌘S to save
+  - alert [ref=e57]

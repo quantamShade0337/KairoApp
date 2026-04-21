@@ -1,0 +1,29 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e57]
+  - generic [ref=e58]:
+    - link "Kyro" [ref=e60] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e66]:
+      - paragraph [ref=e68]: Sign in to save this draft and keep building without losing your progress.
+      - generic [ref=e69]:
+        - button "Create account" [ref=e70]
+        - button "Sign in" [ref=e71]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - paragraph [ref=e74]: Sign in
+          - heading "Welcome back" [level=1] [ref=e75]
+          - paragraph [ref=e76]: Pick up where you left off.
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: Email
+            - textbox "alexc@kyro.dev" [ref=e80]
+          - generic [ref=e81]:
+            - generic [ref=e82]: Password
+            - generic [ref=e83]:
+              - textbox "password123" [ref=e84]
+              - button "show" [ref=e85]
+          - button "Sign in" [disabled] [ref=e86]
+        - generic [ref=e87]:
+          - paragraph [ref=e88]: Demo account
+          - paragraph [ref=e89]: "`alexc@kyro.dev`"
+          - paragraph [ref=e90]: "`password123`"
