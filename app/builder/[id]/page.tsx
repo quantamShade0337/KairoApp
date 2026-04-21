@@ -3,7 +3,7 @@
 import { use, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import BuilderWizard from "./BuilderWizard";
+import BuilderWizard from "@/app/builder/[id]/BuilderWizard";
 import { requestJson } from "@/lib/http-client";
 import type { PublicProject } from "@/lib/backend/types";
 
