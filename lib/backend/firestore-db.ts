@@ -1,6 +1,6 @@
 import "server-only";
 
-import { initializeApp, getApps, cert, type App } from "firebase-admin/app";
+import { initializeApp, getApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import type { Database } from "@/lib/backend/types";
 
@@ -11,12 +11,13 @@ function getFirestoreDb() {
     throw new Error("FIREBASE_PROJECT_ID not configured");
   }
 
-  // Check if app is already initialized
-  let app = getApps().find((a: App) => a.name === "default");
+  let app;
 
-  if (!app) {
-    // Use Application Default Credentials (works on Vercel with proper setup)
-    // Or use service account if FIREBASE_SERVICE_ACCOUNT env var is set
+  try {
+    // Try to get existing app
+    app = getApp();
+  } catch {
+    // App doesn't exist, initialize it
     const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
 
     if (serviceAccountJson) {
@@ -26,7 +27,6 @@ function getFirestoreDb() {
         projectId,
       });
     } else {
-      // This will use Application Default Credentials from the environment
       app = initializeApp({
         projectId,
       });
