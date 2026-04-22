@@ -15,7 +15,7 @@ type AppCardItem = {
 
 export function AppCardSkeleton() {
   return (
-    <div className="border border-[#eaeaea] rounded-lg p-5 flex flex-col gap-3">
+    <div className="border border-[#eaeaea] rounded-xl p-5 flex flex-col gap-3 bg-white">
       <div className="skeleton h-4 w-2/3 rounded" />
       <div className="skeleton h-3 w-full rounded mt-1" />
       <div className="skeleton h-3 w-4/5 rounded" />
@@ -34,34 +34,39 @@ export default function AppCard({ app }: { app: AppCardItem }) {
   return (
     <Link
       href={`/market/${app.id}`}
-      className="group border border-[#eaeaea] rounded-lg p-5 flex flex-col gap-2 hover:border-black transition-all duration-150 cursor-pointer bg-white hover:shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+      className="group border border-[#eaeaea] rounded-xl p-5 flex flex-col gap-2.5 hover:border-black hover:shadow-[0_2px_20px_rgba(0,0,0,0.07)] transition-all duration-200 cursor-pointer bg-white"
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-sm font-semibold text-black leading-snug group-hover:text-[#4F46E5] transition-colors duration-150">
+        <h3 className="text-sm font-semibold text-black leading-snug group-hover:text-[#4F46E5] transition-colors duration-150 line-clamp-1">
           {app.name}
         </h3>
-        <span className="text-[11px] text-[#666] bg-[#f5f5f5] px-2 py-0.5 rounded-full shrink-0 font-mono leading-5 flex items-center gap-1.5">
-          <span>{app.category}</span>
-          <span className="text-[#999]">·</span>
-          <span>{priceLabel}</span>
-        </span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="text-[10px] font-mono text-[#aaa] border border-[#eaeaea] rounded-full px-2 py-0.5 bg-[#fafafa]">
+            {app.category}
+          </span>
+          {priceCents > 0 ? (
+            <span className="text-[10px] font-mono text-black border border-[#eaeaea] rounded-full px-2 py-0.5 font-semibold">
+              {priceLabel}
+            </span>
+          ) : (
+            <span className="text-[10px] font-mono text-[#10B981] border border-[#10B981]/20 rounded-full px-2 py-0.5 bg-[#f0fdf4]">
+              Free
+            </span>
+          )}
+        </div>
       </div>
 
       <p className="text-xs text-[#666] leading-relaxed line-clamp-2 flex-1">
         {app.description}
       </p>
 
-      <div className="flex items-center justify-between pt-4 mt-auto border-t border-[#eaeaea]">
-        <span className="text-xs text-[#666]">
-          <span className="text-black font-medium">{app.creator}</span>
+      <div className="flex items-center justify-between pt-3 mt-auto border-t border-[#eaeaea]">
+        <span className="text-xs text-[#aaa] font-mono truncate max-w-[120px]">
+          {app.creator}
         </span>
-        <div className="flex items-center gap-3">
-          <span className="text-[11px] text-[#666] font-mono">
-            {app.uses.toLocaleString()} uses
-          </span>
-          <span className="text-[11px] text-[#666] group-hover:text-black transition-colors duration-150 font-medium">
-            Open →
-          </span>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-[11px] text-[#ccc] font-mono">{app.uses.toLocaleString()} uses</span>
+          <span className="text-[11px] font-semibold text-[#aaa] group-hover:text-[#4F46E5] transition-colors duration-150">Open →</span>
         </div>
       </div>
     </Link>
