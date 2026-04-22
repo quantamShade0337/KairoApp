@@ -20,13 +20,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--background);
@@ -37,27 +33,16 @@ body {
   font-size: 14px;
 }
 
-::selection {
-  background: #000;
-  color: #fff;
-}
+::selection { background: #000; color: #fff; }
 
-/* Focus visible — keyboard users must see focus */
-:focus-visible {
-  outline: 2px solid #4F46E5;
-  outline-offset: 2px;
-  border-radius: 3px;
-}
+:focus-visible { outline: 2px solid #4F46E5; outline-offset: 2px; border-radius: 3px; }
+:focus:not(:focus-visible) { outline: none; }
 
-/* Suppress focus outline for mouse clicks only */
-:focus:not(:focus-visible) {
-  outline: none;
-}
+/* ── Skeleton ─────────────────────────────────────────────────────── */
 
-/* Skeleton animation */
 @keyframes shimmer {
-  0% { background-position: -400% 0; }
-  100% { background-position: 400% 0; }
+  0%   { background-position: -400% 0; }
+  100% { background-position:  400% 0; }
 }
 
 .skeleton {
@@ -66,32 +51,61 @@ body {
   animation: shimmer 1.8s ease-in-out infinite;
 }
 
-/* Marquee */
+/* ── Marquee ──────────────────────────────────────────────────────── */
+
 @keyframes marquee {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to   { transform: translateX(-50%); }
 }
 
 .marquee-track {
-  animation: marquee 28s linear infinite;
+  animation: marquee 34s linear infinite;
   will-change: transform;
 }
+.marquee-track:hover { animation-play-state: paused; }
 
-.marquee-track:hover {
-  animation-play-state: paused;
+/* ── Page entrance ────────────────────────────────────────────────── */
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Scrollbar */
+main { animation: page-in 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ── Typewriter cursor ────────────────────────────────────────────── */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── Pulsing status dot ───────────────────────────────────────────── */
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* ── Section content fade-in (used by FadeUp component) ──────────── */
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────── */
+
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #bbb; }
 
-/* Hide scrollbar for strip */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Code editor line numbers */
+/* ── Code editor ──────────────────────────────────────────────────── */
+
 .code-editor-wrapper {
   display: grid;
   grid-template-columns: 40px 1fr;
