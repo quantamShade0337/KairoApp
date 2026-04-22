@@ -246,6 +246,28 @@ function MiniAppCard({ app }: { app: PublicApp }) {
   );
 }
 
+// ─── Creator card (without stats since PublicUser doesn't have them) ────────────
+
+function CreatorCard({ creator }: { creator: PublicUser }) {
+  return (
+    <Link href={`/profile/${creator.handle}`} className="flex flex-col gap-3 rounded-xl border border-[#eaeaea] bg-white p-5 hover:border-black hover:shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-200">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center text-white text-sm font-semibold shrink-0">
+          {creator.name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-black">{creator.name}</p>
+          <p className="text-[11px] text-[#aaa] font-mono">@{creator.handle}</p>
+        </div>
+      </div>
+      <p className="text-xs text-[#666] leading-relaxed line-clamp-2 flex-1">{creator.bio}</p>
+      <div className="pt-3 mt-auto border-t border-[#eaeaea] text-xs text-[#999]">
+        Visit profile →
+      </div>
+    </Link>
+  );
+}
+
 // ─── Props & main ─────────────────────────────────────────────────────────────
 
 type Props = { apps: PublicApp[]; creators: PublicUser[] };
@@ -580,22 +602,7 @@ export default function LandingClient({ apps, creators }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {creators.slice(0, 6).map((c, i) => (
                 <FadeUp key={c.handle} delay={s(i)}>
-                  <Link href={`/profile/${c.handle}`} className="flex flex-col gap-3 rounded-xl border border-[#eaeaea] bg-white p-5 hover:border-black hover:shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                        {c.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-black">{c.name}</p>
-                        <p className="text-[11px] text-[#aaa] font-mono">@{c.handle}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-[#666] leading-relaxed line-clamp-2 flex-1">{c.bio}</p>
-                    <div className="flex gap-4 pt-3 mt-auto border-t border-[#eaeaea]">
-                      <span className="text-[11px] text-[#bbb] font-mono">{c.appCount} apps</span>
-                      <span className="text-[11px] text-[#bbb] font-mono">{c.totalUses.toLocaleString()} uses</span>
-                    </div>
-                  </Link>
+                  <CreatorCard creator={c} />
                 </FadeUp>
               ))}
             </div>
