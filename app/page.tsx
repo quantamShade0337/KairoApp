@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import LandingClient from "@/components/LandingClient";
+import LandingClient from "@/components/landing/LandingClient";
 import { getHomeFeed } from "@/lib/backend/service";
 
 export const dynamic = "force-dynamic";
